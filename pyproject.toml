@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "zkgraph"
+version = "0.1.0"
+description = "A small framework for zkml based on the Virgo++ protocol"
+authors = ["Lorenzo Tomaz"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+black = "^24.8.0"
+mypy = "^1.11.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
