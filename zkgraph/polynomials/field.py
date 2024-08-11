@@ -357,7 +357,7 @@ class FiniteField:
     one = ModularInteger(1, True)
 
     def characteristic(self):
-        return PRIME_MODULO
+        return self.mod
 
     def __init__(self, mod: int):
         self.mod = mod
