@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body
-from models.proof_request import ProofRequest
-from config.database import proof_requests_collection
-from schemas.proof_request_schema import list_serial
+from backend.models.proof_request import ProofRequest
+from backend.config.database import proof_requests_collection
+from backend.schemas.proof_request_schema import list_serial
 
 router = APIRouter()
 

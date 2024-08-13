@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from routes.proof_requests import router as ProofRequestRouter
+from backend.routes.proof_requests import router as ProofRequestRouter
 
 load_dotenv()
 app = FastAPI()
