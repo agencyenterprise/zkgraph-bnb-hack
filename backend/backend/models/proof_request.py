@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from bson import ObjectId
-from models.id import ID
+from backend.models.id import ID
 
 class ProofRequest(BaseModel):
     id: ID = None
