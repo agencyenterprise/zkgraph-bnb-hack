@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="mx-auto max-w-2xl py-12 sm:py-32 lg:py-36 px-4 ">
+    <div className="mx-auto max-w-2xl py-16 sm:py-32 lg:py-36 px-4 ">
       <div className="hidden sm:mb-8 sm:flex sm:justify-center">
         <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
           Public code and more techinical info{" "}
@@ -16,7 +16,7 @@ export default function Home() {
         </div>
       </div>
       <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-5xl">
           A ZKML framework based on the Virgo++/Libra protocol
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-300">
@@ -31,7 +31,10 @@ export default function Home() {
           >
             Get started
           </Link>
-          <a href="#" className="text-sm font-semibold leading-6 text-white">
+          <a
+            href="/demo"
+            className="text-sm font-semibold leading-6 text-white"
+          >
             Learn more <span aria-hidden="true">→</span>
           </a>
         </div>
