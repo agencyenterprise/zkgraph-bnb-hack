@@ -1,6 +1,11 @@
+"use client";
+
+import Button from "@/components/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="mx-auto max-w-2xl py-16 sm:py-32 lg:py-36 px-4 ">
       <div className="hidden sm:mb-8 sm:flex sm:justify-center">
@@ -25,12 +30,14 @@ export default function Home() {
           proofs for small ONNX graphs for MLP and Numpy computations.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link
-            href="/demo"
-            className="rounded-md bg-orange-400 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300"
-          >
-            Get started
-          </Link>
+          <Button
+            id={`button-started`}
+            type="button"
+            label="Get started"
+            onClick={() => {
+              router.push("/demo");
+            }}
+          />
           <a
             href="/demo"
             className="text-sm font-semibold leading-6 text-white"
