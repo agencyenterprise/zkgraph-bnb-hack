@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   createContext,
   useContext,
@@ -14,6 +16,7 @@ import {
 } from "thirdweb";
 import { useActiveAccount } from "thirdweb/react";
 import * as ethers from "ethers";
+import { client } from "@/lib/auth";
 
 // Create the context
 const ChainContext = createContext({
@@ -25,12 +28,6 @@ const ChainContext = createContext({
 
 // Provider component
 export function ChainProvider({ children }: { children: React.ReactNode }) {
-  const [client] = useState(() =>
-    createThirdwebClient({
-      clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY || "",
-    }),
-  );
-
   const [escrowContract, setEscrowContract] =
     useState<ReturnType<typeof getContract>>();
   const [escrowBalance, setEscrowBalance] = useState<bigint>();
@@ -62,7 +59,7 @@ export function ChainProvider({ children }: { children: React.ReactNode }) {
       });
       setEscrowContract(newEscrowContract);
     }
-  }, [client]);
+  }, []);
 
   useEffect(() => {
     fetchEscrowBalance();
@@ -76,7 +73,7 @@ export function ChainProvider({ children }: { children: React.ReactNode }) {
       escrowBalance,
       fetchEscrowBalance,
     }),
-    [client, escrowContract, escrowBalance, fetchEscrowBalance],
+    [escrowContract, escrowBalance, fetchEscrowBalance],
   );
 
   return (

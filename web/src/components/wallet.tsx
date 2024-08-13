@@ -6,6 +6,7 @@ import { ConnectButton } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 
 import { useChain } from "@/providers/chain";
+import { generatePayload, isLoggedIn, login, logout } from "@/lib/login";
 
 import * as ethers from "ethers";
 
@@ -45,6 +46,22 @@ export default function MetaMaskConnect() {
           wallets={wallets}
           theme={"dark"}
           connectModal={{ size: "wide" }}
+          auth={{
+            isLoggedIn: async (address) => {
+              console.log("checking if logged in!", { address });
+              return await isLoggedIn();
+            },
+            doLogin: async (params) => {
+              console.log("logging in!");
+              await login(params);
+            },
+            getLoginPayload: async ({ address }) =>
+              generatePayload({ address }),
+            doLogout: async () => {
+              console.log("logging out!");
+              await logout();
+            },
+          }}
         />
       )}
     </div>
