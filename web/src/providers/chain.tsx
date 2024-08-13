@@ -19,7 +19,6 @@ import * as ethers from "ethers";
 const ChainContext = createContext({
   client: {} as ReturnType<typeof createThirdwebClient>,
   escrowContract: {} as ReturnType<typeof getContract> | undefined,
-  tokenContract: {} as ReturnType<typeof getContract> | undefined,
   escrowBalance: {} as bigint | undefined,
   fetchEscrowBalance: () => {},
 });
@@ -33,8 +32,6 @@ export function ChainProvider({ children }: { children: React.ReactNode }) {
   );
 
   const [escrowContract, setEscrowContract] =
-    useState<ReturnType<typeof getContract>>();
-  const [tokenContract, setTokenContract] =
     useState<ReturnType<typeof getContract>>();
   const [escrowBalance, setEscrowBalance] = useState<bigint>();
 
@@ -64,13 +61,6 @@ export function ChainProvider({ children }: { children: React.ReactNode }) {
         address: process.env.NEXT_PUBLIC_ESCROW_ADDRESS || "",
       });
       setEscrowContract(newEscrowContract);
-
-      const newTokenContract = getContract({
-        client,
-        chain: defineChain(97),
-        address: process.env.NEXT_PUBLIC_TOKEN_ADDRESS || "",
-      });
-      setTokenContract(newTokenContract);
     }
   }, [client]);
 
@@ -83,11 +73,10 @@ export function ChainProvider({ children }: { children: React.ReactNode }) {
     () => ({
       client,
       escrowContract,
-      tokenContract,
       escrowBalance,
       fetchEscrowBalance,
     }),
-    [client, escrowContract, tokenContract, escrowBalance, fetchEscrowBalance],
+    [client, escrowContract, escrowBalance, fetchEscrowBalance],
   );
 
   return (
