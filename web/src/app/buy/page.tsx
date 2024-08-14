@@ -71,6 +71,7 @@ export default function BuyPage() {
 
   const handleBuy = async (tier: Tier) => {
     if (!client || !escrowContract || !activeAccount) {
+      toast.error("Make sure your wallet is connected");
       return;
     }
     setLoading(true);

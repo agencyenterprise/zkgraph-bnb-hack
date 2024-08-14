@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { isValidJson } from "@/utils/json";
 import JsonInput from "@/components/json-input";
+import Loading from "@/components/loading";
 
 type Data = {
   name?: string;
@@ -16,6 +17,7 @@ type Data = {
 };
 
 export default function BuyPage() {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Data>({});
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const { client, escrowContract } = useChain();
@@ -32,10 +34,16 @@ export default function BuyPage() {
   const handleInference = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!client || !escrowContract || !activeAccount) {
+      toast.error("Make sure your wallet is connected");
       return;
     }
 
-    if (!formData.name || !formData.description || !formData.jsonInput) {
+    if (
+      !formData.name ||
+      !formData.description ||
+      !formData.jsonInput ||
+      !isValidJson(formData.jsonInput)
+    ) {
       if (!formData.name) {
         setFormErrors((prev) =>
           Array.from(new Set([...prev, "Name is required"])),
@@ -55,6 +63,7 @@ export default function BuyPage() {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await fetch("/api/inference", {
         method: "POST",
@@ -77,46 +86,57 @@ export default function BuyPage() {
       const message = "Error generating inference";
       console.log(message);
       toast.error(message + error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-gray-900 py-16 sm:py-32 min-h-screen">
+    <div className="bg-gray-900 py-20 sm:py-32 min-h-screen">
       <form onSubmit={handleInference}>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-6">
-            <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Name
-            </label>
-            <input
-              type="name"
-              id="name"
-              className="bg-[#1e1e1e] border border-[#1e1e1e] text-white text-sm rounded-lg focus:ring-white focus:border-white block w-full p-2.5 "
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="description"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Description
-            </label>
-            <input
-              type="description"
-              id="description"
-              className="bg-[#1e1e1e] border border-[#1e1e1e] text-white text-sm rounded-lg focus:ring-white focus:border-white block w-full p-2.5 "
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
+        <div className="mx-auto max-w-5xl px-6 lg:px-8">
+          <h2 className="text-3xl font-bold tracking-tight text-white pb-6 text-center mx-auto">
+            Inference Request
+          </h2>
+          <p className="mx-auto mt-4 mb-8 sm:mb-12 text-center text-lg leading-8 text-gray-300">
+            Give a name and a description to the proof request to find it late,
+            and place the JSON input that we will process.
+          </p>
+          <div className="flex w-full flex-col sm:flex-row sm:gap-6">
+            <div className="mb-6 flex flex-col grow">
+              <label
+                htmlFor="name"
+                className="block mb-3 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Name
+              </label>
+              <input
+                type="name"
+                id="name"
+                className="bg-[#1e1e1e] border border-[#1e1e1e] text-white text-sm rounded-lg focus:ring-white focus:border-white block w-full py-4 px-3"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
+            <div className="mb-6 flex-col flex grow">
+              <label
+                htmlFor="description"
+                className="block mb-3 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Description
+              </label>
+              <input
+                type="description"
+                id="description"
+                className="bg-[#1e1e1e] border border-[#1e1e1e] text-white text-sm rounded-lg focus:ring-white focus:border-white block w-full py-4 px-3 "
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </div>
           </div>
 
           <div className="mb-6">
@@ -132,7 +152,7 @@ export default function BuyPage() {
           </div>
 
           {formErrors?.length > 0 && (
-            <div className="mt-4 flex flex-col items-end justify-end">
+            <div className="mt-4 mb-6 flex flex-col justify-start sm:justify-end">
               {formErrors.map((error) => (
                 <p key={error} className="text-red-400 text-sm mb-1">
                   {error}
@@ -141,11 +161,19 @@ export default function BuyPage() {
             </div>
           )}
 
-          <Button
-            id={`button-submit`}
-            type="submit"
-            label={"Generate Inference"}
-          />
+          {loading ? (
+            <div className="mb-6 flex justify-center">
+              <Loading size="100px" />
+            </div>
+          ) : (
+            <div className="mb-6 flex justify-center sm:justify-start">
+              <Button
+                id={`button-submit`}
+                type="submit"
+                label={"Generate Inference"}
+              />
+            </div>
+          )}
         </div>
       </form>
     </div>
