@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@monaco-editor/react": "^4.6.0",
     "@thirdweb-dev/react": "^4.9.4",
     "ethers": "^6.13.2",
     "next": "14.2.5",

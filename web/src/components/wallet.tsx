@@ -6,7 +6,7 @@ import { ConnectButton } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 
 import { useChain } from "@/providers/chain";
-import { generatePayload, isLoggedIn, login, logout } from "@/lib/login";
+import { generatePayload, isLoggedIn, login, logout } from "@/utils/login";
 
 import * as ethers from "ethers";
 

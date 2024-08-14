@@ -16,7 +16,7 @@ import {
 } from "thirdweb";
 import { useActiveAccount } from "thirdweb/react";
 import * as ethers from "ethers";
-import { client } from "@/lib/auth";
+import { client } from "@/utils/auth";
 
 // Create the context
 const ChainContext = createContext({

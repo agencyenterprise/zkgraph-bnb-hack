@@ -1,4 +1,4 @@
-import { getLogged } from "@/lib/login";
+import { getLogged } from "@/utils/login";
 
 export async function POST(req: Request) {
   const data = await req.json();
