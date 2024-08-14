@@ -9,7 +9,6 @@ class ProofRequest(BaseModel):
     description: str
     ai_model_name: str
     ai_model_inputs: str
-    owner_id: ObjectId
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
