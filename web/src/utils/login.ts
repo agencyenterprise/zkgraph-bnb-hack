@@ -44,11 +44,13 @@ export async function isLoggedIn() {
 
 export async function getLogged() {
   const jwt = cookies().get("jwt");
+  console.log({ jwt })
   if (!jwt?.value) {
     return false;
   }
 
   const authResult = await thirdwebAuth.verifyJWT({ jwt: jwt.value });
+  console.log({ authResult })
   if (!authResult.valid) {
     return;
   }
