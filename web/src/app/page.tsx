@@ -35,11 +35,11 @@ export default function Home() {
             type="button"
             label="Get started"
             onClick={() => {
-              router.push("/demo");
+              router.push("/requestProof");
             }}
           />
           <a
-            href="/demo"
+            href="/requestProof"
             className="text-sm font-semibold leading-6 text-white"
           >
             Learn more <span aria-hidden="true">→</span>

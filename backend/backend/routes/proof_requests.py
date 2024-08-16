@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, Header, Request
+from fastapi import APIRouter, Body, Depends, Path
 from backend.models.proof_request import ProofRequest
 from backend.auth.auth import authenticate
 from backend.config.database import proof_requests_collection
@@ -8,11 +8,12 @@ from backend.blockchain.defender import RelayerClient
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/{owner_wallet}")
 async def get_proof_requests(
+    owner_wallet: str = Path(..., alias="owner_wallet"),
     _ = Depends(authenticate),
 ):
-    proofs = proof_requests_collection.find()
+    proofs = proof_requests_collection.find({"owner_wallet": owner_wallet })
     return list_serial(proofs)
 
 @router.post("/")
@@ -53,5 +54,4 @@ async def create_proof_request(
     # pika_client = PikaClient(os.environ.get("RABBITMQ_URL"))
     # await pika_client.publish("requests_queue", proof_request_message_body)
 
-    return individual_serial(proofRequest)
-    
+    return individual_serial(proofRequest.dict())
