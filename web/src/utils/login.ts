@@ -44,7 +44,6 @@ export async function isLoggedIn() {
 
 export async function getLogged() {
   const jwt = cookies().get("jwt");
-  console.log({ jwt })
   if (!jwt?.value) {
     return false;
   }

@@ -6,6 +6,7 @@ from backend.models.id import ID
 class ProofRequest(BaseModel):
     id: ID = None
     name: str
+    owner_wallet: str
     description: str
     ai_model_name: str
     ai_model_inputs: str

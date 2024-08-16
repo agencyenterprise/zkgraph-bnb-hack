@@ -1,14 +1,14 @@
 import { getLogged } from "@/utils/login";
-import { STATUS_CODES } from "http";
 
 export async function POST(req: Request) {
+  const session = await getLogged();
   const data = await req.json();
 
-  console.log("data", data);
+  const ownerWallet = (session as any).ctx.wallet
 
-  
   const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
   const backendAuthToken = process.env.BACKEND_AUTH_TOKEN || "";
+
   const response = await fetch(`${backendUrl}/proof_requests`, {
     method: "POST",
     headers: {
@@ -16,9 +16,10 @@ export async function POST(req: Request) {
       "Auth-Token": backendAuthToken,
     },
     body: JSON.stringify({
+      owner_wallet: ownerWallet,
       name: data.name,
       description: data.description,
-      graph_url: "",
+      // graph_url: "",
       ai_model_name: "Iris",
       ai_model_inputs: data.jsonInput,
     })
@@ -27,8 +28,8 @@ export async function POST(req: Request) {
   if (!response.ok) {
     return Response.json({
       error: "Failed to create proof request",
-    }, { 
-      status: 500 
+    }, {
+      status: 500
     });
   }
 

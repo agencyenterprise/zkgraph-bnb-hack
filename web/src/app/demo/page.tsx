@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { isValidJson } from "@/utils/json";
 import JsonInput from "@/components/json-input";
-import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
 import { twMerge } from 'tailwind-merge';
 
@@ -34,7 +33,7 @@ export default function BuyPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Data>({});
-  const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [formErrors, setFormErrors] = useState<string[]>(["", "", "",]);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedModelOption, setSelectedModelOption] = useState<number | undefined>();
   const { client, escrowContract } = useChain();
@@ -83,7 +82,6 @@ export default function BuyPage() {
   return (
     <div className="bg-gray-900 py-20 sm:py-32 min-h-screen">
       <form onSubmit={handleInference}>
-        {/* <div className="mx-auto max-w-5xl px-6 lg:px-8"> */}
         <div className="mx-auto max-w-xl lg:max-w-lg">
           <h2 className="text-3xl font-bold tracking-tight text-white pb-6 text-center mx-auto">
             Proof Request
@@ -97,10 +95,10 @@ export default function BuyPage() {
                 <div className="grid grid-cols-2 gap-8">
                   {
                     modelOptions && modelOptions.map((model, index) => (
-                      <button
+                      <div
                         key={index}
                         className={twMerge(
-                          "flex flex-col max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700",
+                          "flex flex-col max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 cursor-pointer",
                           selectedModelOption === index && "bg-gray-100 dark:bg-gray-700"
                         )}
                         onClick={() => setSelectedModelOption(index)}
@@ -111,7 +109,7 @@ export default function BuyPage() {
                         <p className="text-left text-sm text-gray-700 dark:text-gray-400">
                           {model.description}
                         </p>
-                      </button>
+                      </div>
                     ))
                   }
                 </div>
