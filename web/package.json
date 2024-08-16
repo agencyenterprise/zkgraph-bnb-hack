@@ -18,7 +18,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-toastify": "^10.0.5",
-    "thirdweb": "^5.45.1"
+    "thirdweb": "^5.45.1",
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

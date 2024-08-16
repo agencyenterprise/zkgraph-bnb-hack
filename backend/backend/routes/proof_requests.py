@@ -15,13 +15,20 @@ async def get_proof_requests(
 
 @router.post("/")
 async def create_proof_request(
+    owner_wallet: str = Body(),
     name: str = Body(),
     description: str = Body(),
     ai_model_name: str = Body(),
     ai_model_inputs: str = Body(),
     _ = Depends(authenticate),
 ):
-    proofRequest = ProofRequest(name=name, description=description, ai_model_name=ai_model_name, ai_model_inputs=ai_model_inputs)
+    proofRequest = ProofRequest(
+        owner_wallet=owner_wallet,
+        name=name,
+        description=description,
+        ai_model_name=ai_model_name,
+        ai_model_inputs=ai_model_inputs
+    )
     result = proof_requests_collection.insert_one(proofRequest.dict())
     proofRequest._id = str(result.inserted_id)
     return individual_serial(proofRequest)
