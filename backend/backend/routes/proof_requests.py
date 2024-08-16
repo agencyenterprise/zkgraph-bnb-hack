@@ -8,7 +8,6 @@ router = APIRouter()
 
 @router.get("/")
 async def get_proof_requests(
-    wallet: str = Body(),
     _ = Depends(authenticate),
 ):
     proofs = proof_requests_collection.find()
