@@ -13,6 +13,8 @@ pymongo = {extras = ["srv"], version = "^4.7.3"}
 python-dotenv = "^1.0.1"
 pydantic = "^2.8.2"
 pycognito = "^2024.5.1"
+web3 = "^6.20.2"
+eth-abi = "^5.1.0"
 
 [build-system]
 requires = ["poetry-core"]

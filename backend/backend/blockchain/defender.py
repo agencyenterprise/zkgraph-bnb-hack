@@ -7,6 +7,23 @@ from pycognito.utils import RequestsSrpAuth
 BASE_RELAY_API = "https://defender-api.openzeppelin.com/relayer/"
 BASE_RELAYER_API = "https://api.defender.openzeppelin.com/"
 
+class RelayException(Exception):
+    """Base exception for Relay API errors"""
+
+    pass
+
+
+class RelayTimeoutError(RelayException):
+    """Timeout exception"""
+
+    pass
+
+
+class RelayUnauthorizedError(RelayException):
+    """Unauthorized exception"""
+
+    pass
+
 class BaseClient:
     def __init__(
         self,
@@ -113,21 +130,7 @@ class BaseClient:
             # if error parsing fails, return the entire response
             return RelayException(response.json())
 
-class RelayException(Exception):
-    """Base exception for Relay API errors"""
-
-    pass
-
-class RelayTimeoutError(RelayException):
-    """Timeout exception"""
-
-    pass
-
-class RelayUnauthorizedError(RelayException):
-    """Unauthorized exception"""
-
-    pass
-
+class RelayClient(BaseClient):
     def __init__(
         self,
         api_key: str,
