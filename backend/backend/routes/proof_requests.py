@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, Header, Request
+from fastapi import APIRouter, Body, Depends, Path
 from backend.models.proof_request import ProofRequest
 from backend.auth.auth import authenticate
 from backend.config.database import proof_requests_collection
@@ -6,11 +6,12 @@ from backend.schemas.proof_request_schema import list_serial, individual_serial
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/{owner_wallet}")
 async def get_proof_requests(
+    owner_wallet: str = Path(..., alias="owner_wallet"),
     _ = Depends(authenticate),
 ):
-    proofs = proof_requests_collection.find()
+    proofs = proof_requests_collection.find({"owner_wallet": owner_wallet })
     return list_serial(proofs)
 
 @router.post("/")
@@ -31,5 +32,5 @@ async def create_proof_request(
     )
     result = proof_requests_collection.insert_one(proofRequest.dict())
     proofRequest._id = str(result.inserted_id)
-    return individual_serial(proofRequest)
+    return individual_serial(proofRequest.dict())
     
