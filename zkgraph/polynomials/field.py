@@ -1,9 +1,17 @@
 from typing import Union
+import math
+import random
 
 PRIME_MODULO = 2**255 - 19
 PRECISION_BITS = 64
 SCALE = 2**PRECISION_BITS
 NEGATIVE_POINT = PRIME_MODULO // 2
+ROUND_PRECISION = 50
+PRECISION_THRESHOLD = 3.999999999999999999999999999999999999999999999999
+
+
+def truncate(f, n):
+    return math.floor(f * 10**n) / 10**n
 
 
 def quantization(x, precision_bits=PRECISION_BITS, modulus=PRIME_MODULO):
@@ -56,7 +64,7 @@ def dequantization(
         x_int = x_int - modulus
 
     x_dequantized = x_int / quantization_scale
-    return round(x_dequantized, 2)
+    return round(x_dequantized, ROUND_PRECISION)
 
 
 def qmul(a, b, modulus=PRIME_MODULO, precision_bits=PRECISION_BITS):
@@ -73,8 +81,6 @@ def qmul(a, b, modulus=PRIME_MODULO, precision_bits=PRECISION_BITS):
     Returns:
     FiniteField: The result of the multiplication, correctly scaled.
     """
-    quantization_scale = 2**precision_bits
-    # Calculate the product in the finite field
     if hasattr(a, "val"):
         a = a.val
     elif not isinstance(a, int) and not isinstance(a, float):
@@ -83,25 +89,9 @@ def qmul(a, b, modulus=PRIME_MODULO, precision_bits=PRECISION_BITS):
         b = b.val
     elif not isinstance(b, int) and not isinstance(b, float):
         raise ValueError("b must be an integer or float")
-    adq, bdq = dequantization(a), dequantization(b)
-    ap = a
-    if adq < 0:
-        ap = quantization(-adq)
-    bp = b
-    if bdq < 0:
-        bp = quantization(-bdq)
-    product = ap * bp
-    sign_neg = (adq < 0) ^ (
-        bdq < 0
-    )  # XOR to determine if the result should be negative
-    if product > modulus:
-        product = product % modulus
-    # Adjust the scale by dividing by the quantization scale
-    # inverse_scale =
-    scaled_result = (product / quantization_scale) % modulus
-    if sign_neg:
-        scaled_result = quantization(-dequantization(scaled_result))
-    return int(scaled_result) % modulus
+    a = dequantization(a)
+    b = dequantization(b)
+    return quantization(a * b)
 
 
 def qadd(a, b, modulus=PRIME_MODULO, precision_bits=PRECISION_BITS):
@@ -137,19 +127,7 @@ def qexp(base, exponent, modulus=PRIME_MODULO, precision_bits=PRECISION_BITS):
     Returns:
     FiniteField element: The result of the exponentiation.
     """
-    result = quantization(
-        1, precision_bits, modulus
-    )  # Identity element of multiplication in the field
-
-    while exponent > 0:
-        if exponent % 2 == 1:
-            result = qmul(
-                result, base, modulus, precision_bits
-            )  # Multiply result by base if the current exp bit is 1
-        base = qmul(base, base, modulus, precision_bits)  # Square the base
-        exponent //= 2  # Right shift the exponent
-
-    return int(result)
+    return quantization(dequantization(base.val) ** exponent)
 
 
 def qdiv(a, b):
@@ -174,25 +152,10 @@ def qdiv(a, b):
         raise ValueError("b must be an integer or float")
     if b == 0:
         raise ValueError("Division by zero is not allowed.")
-
-    b = dequantization(b) * SCALE
-    a = dequantization(a) * SCALE
-    # Determine the sign of the result
-    sign_neg = (a < 0) ^ (b < 0)  # XOR to determine if the result should be negative
-
-    # Use absolute values for division to ensure correctness
-    abs_a = abs(a)
-    abs_b = abs(b)
-
-    # Adjust 'a' by the scaling factor to maintain precision after division
-    scaled_a = abs_a * SCALE
-
-    # Perform the division using absolute values
-    abs_result = scaled_a // abs_b
-    if not sign_neg:
-        return abs_result % PRIME_MODULO
-    else:
-        return quantization(-dequantization(abs_result)) % PRIME_MODULO
+    b = dequantization(b)
+    a = dequantization(a)
+    result = a / b
+    return quantization(result)
 
 
 def qcompare(a, b, modulus=PRIME_MODULO):
@@ -230,7 +193,61 @@ def qge(a, b):
 
 def qne(a, b):
     """Not equal comparison for quantized numbers."""
-    return a.val != b.val
+    precision = 2
+    # return round(dequantization(a.val), precision) != round(
+    #     dequantization(b.val), precision
+    # )
+    return truncate(dequantization(a.val), precision) != truncate(
+        dequantization(b.val), precision
+    )
+
+
+def eq(a, b):
+    """Equal comparison for quantized numbers."""
+    precision = 2
+    return truncate(dequantization(a.val), precision) == truncate(
+        dequantization(b.val), precision
+    )
+
+
+def float_to_mod_float(value: Union[float, "ModularInteger"]) -> float:
+    """Convert a floating-point number to a modular floating-point number.
+
+    Args:
+        value (Union[float, &quot;ModularInteger&quot;]): value to convert
+
+    Returns:
+        float: converted value
+    """
+    MAX_FLOAT = 3.999999999999
+    MAX_INT = quantization(MAX_FLOAT)
+
+    # Step 1: Convert the float to an integer by multiplying by 2^64
+    if hasattr(value, "val"):
+        converted_value = value.val
+    else:
+        converted_value = value
+
+    mod_value = converted_value % MAX_INT
+    result = dequantization(mod_value)
+
+    result = round(result, ROUND_PRECISION)
+    return quantization(result)
+
+
+def generate_random_modular_float() -> float:
+    """Generate a random modular floating-point number.
+
+    Returns:
+        float: random modular floating-point number
+    """
+
+    random_value = random.uniform(0, PRECISION_THRESHOLD)
+
+    rounded_value = round(random_value, ROUND_PRECISION)
+
+    # Step 3: Apply the quantization (assuming you want the result in quantized form)
+    return quantization(rounded_value)
 
 
 class ModularInteger:
@@ -288,6 +305,18 @@ class ModularInteger:
             other = ModularInteger(other, True)
         return qne(self, other)
 
+    def __eq__(self, other: "ModularInteger"):
+        if isinstance(other, ModularInteger):
+            other = ModularInteger(other.val, False)
+        if isinstance(other, float):
+            other = ModularInteger(other, True)
+        if isinstance(other, int):
+            other = ModularInteger(other, True)
+        return eq(self, other)
+
+    def __neg__(self):
+        return ModularInteger(quantization(-dequantization(self.val)), False)
+
     def __add__(self, other: "ModularInteger"):
         if isinstance(other, ModularInteger):
             other = ModularInteger(other.val, False)
@@ -305,18 +334,6 @@ class ModularInteger:
         if isinstance(other, int):
             other = ModularInteger(other, True)
         return ModularInteger(qadd(self, -other), False)
-
-    def __neg__(self):
-        return ModularInteger(quantization(-dequantization(self.val)), False)
-
-    def __eq__(self, other: "ModularInteger"):
-        if isinstance(other, ModularInteger):
-            other = ModularInteger(other.val, False)
-        if isinstance(other, float):
-            other = ModularInteger(other, True)
-        if isinstance(other, int):
-            other = ModularInteger(other, True)
-        return self.val == other.val
 
     def __mul__(self, other: "ModularInteger"):
         if isinstance(other, ModularInteger):
@@ -345,6 +362,15 @@ class ModularInteger:
         one = ModularInteger(1)
         return one / self
 
+    @staticmethod
+    def random():
+        return ModularInteger(generate_random_modular_float(), False)
+
+    def float_to_mod_float(
+        self, value: Union[float, "ModularInteger"]
+    ) -> "ModularInteger":
+        return ModularInteger(float_to_mod_float(value), False)
+
     def __repr__(self) -> str:
         return f"({self.val}, {dequantization(self.val)})"
 
@@ -364,3 +390,6 @@ class FiniteField:
 
     def __call__(self, val: float, scale=False):
         return ModularInteger(val, scale)
+
+
+DOMAIN = FiniteField(PRIME_MODULO)
