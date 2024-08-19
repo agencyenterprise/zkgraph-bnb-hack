@@ -4,12 +4,13 @@ import Button from "@/components/button";
 import { useChain } from "@/providers/chain";
 
 import { useActiveAccount } from "thirdweb/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { isValidJson } from "@/utils/json";
 import JsonInput from "@/components/json-input";
 import { useRouter } from "next/navigation";
 import { twMerge } from 'tailwind-merge';
+import Loading from "@/components/loading";
 
 type Data = {
   name?: string;
@@ -33,19 +34,10 @@ export default function BuyPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Data>({});
-  const [formErrors, setFormErrors] = useState<string[]>(["", "", "",]);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedModelOption, setSelectedModelOption] = useState<number | undefined>();
   const { client, escrowContract } = useChain();
   const activeAccount = useActiveAccount();
-
-  useEffect(() => {
-    if (formData.jsonInput && !isValidJson(formData.jsonInput)) {
-      setFormErrors((prev) => Array.from(new Set([...prev, "Invalid JSON"])));
-    } else {
-      setFormErrors((prev) => prev.filter((error) => error !== "Invalid JSON"));
-    }
-  }, [formData.jsonInput]);
 
   const handleInference = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,6 +56,7 @@ export default function BuyPage() {
       });
 
       if (response.ok) {
+        setLoading(false);
         router.push("/requests");
       } else {
         const message = "Error generating inference";
@@ -87,7 +80,19 @@ export default function BuyPage() {
             Proof Request
           </h2>
           {
-            currentStep === 1 && (
+            loading ? (
+              <div className="mb-6 flex justify-center">
+                <Loading size="100px" />
+              </div>
+            ) : (
+              <div className="mb-6 flex justify-center sm:justify-start">
+                <Button
+                  id={`button-submit`}
+                  type="submit"
+                  label={"Generate Inference"}
+                />
+              </div>
+            ) || currentStep === 1 && (
               <>
                 <h3 className="text-2xl font-bold tracking-tight text-white pb-6">
                   Select the model
