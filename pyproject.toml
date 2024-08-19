@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "zkgraph"
 version = "0.1.0"
-description = "A small framework for zkml based on the Virgo++ protocol"
+description = "A small framework for zkml based on the Libra/Virgo++ protocols"
 authors = ["Lorenzo Tomaz"]
 license = "MIT"
 readme = "README.md"

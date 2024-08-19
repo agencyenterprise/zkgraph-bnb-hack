@@ -1013,8 +1013,6 @@ class ZkProver:
         return ret
 
     def generate_randomness(self, size: int, label: str) -> List[ModularInteger]:
-        if size > 1:
-            pass
         return self.transcript.get_sympy_ff_challenges(label.encode(), size)
 
     def beta_init(
@@ -1208,8 +1206,8 @@ class ZkProver:
         alpha = self.domain.one
         beta = self.domain.zero
         bit_len = self.C.circuit[self.C.total_depth - 1].bitLength
-        self.r_0 = [self.one for _ in range(bit_len)]
-        self.r_1 = [self.one for _ in range(bit_len)]
+        self.r_0 = self.generate_randomness(size=bit_len, label="r_0")
+        self.r_1 = self.generate_randomness(size=bit_len, label="r_1")
         self.one_minus_r_0 = [self.domain.zero] * bit_len
         self.one_minus_r_1 = [self.domain.zero] * bit_len
         for i in range(bit_len):
@@ -1246,6 +1244,8 @@ class ZkProver:
             self.generate_maskpoly_after_rho(previous_bit_len * 2 + 1, 2)
 
             alpha_beta_sum = alpha_beta_sum + self.maskpoly_sumc
+            if not hasattr(alpha_beta_sum, "val"):
+                pass
             self.transcript.append_sympy_ff(b"alpha_beta_sum", alpha_beta_sum)
             self.sumcheck_phase1_init()
             previous_random = self.domain.zero

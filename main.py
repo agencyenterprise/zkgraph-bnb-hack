@@ -8,6 +8,7 @@ from zkgraph.graph.engine import Value
 from zkgraph.ops.onnx_utils import generate_small_iris_onnx_model
 from zkgraph.ops.from_onnx import from_onnx
 from zkgraph.prover.prover import ZkProver
+from zkgraph.verifier.verifier import ZkVerifier
 
 
 def add_intermediate_layers_as_outputs(onnx_model):
@@ -58,12 +59,18 @@ def main():
     )
 
     start = time.time()
-    layered_circuit, _ = Value.compile_layered_circuit(graph_output)
+    layered_circuit, _, layers = Value.compile_layered_circuit(graph_output, True)
     print(f"Time to compile: {time.time() - start}")
     start = time.time()
     prover = ZkProver(layered_circuit)
     assert prover.prove()
     print(f"Time to prove: {time.time() - start}")
+    proof_transcript = prover.proof_transcript.to_bytes()
+    print(f"Time to prove: {time.time() - start}")
+    # start = time.time()
+    verifier = ZkVerifier(layered_circuit)
+    verifier.run_verifier(proof_transcript=proof_transcript)
+    print(f"Time to verify: {time.time() - start}")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,9 @@ from typing import Union
 import math
 import random
 
-PRIME_MODULO = 2**255 - 19
+PRIME_MODULO = (
+    2**255 - 19
+)  # 21888242871839275222246405745257275088548364400416034343698204186575808495617  # 2**255 - 19
 PRECISION_BITS = 64
 SCALE = 2**PRECISION_BITS
 NEGATIVE_POINT = PRIME_MODULO // 2
@@ -193,21 +195,38 @@ def qge(a, b):
 
 def qne(a, b):
     """Not equal comparison for quantized numbers."""
-    precision = 2
+    # @TODO: This is a temporary fix to avoid floating point errors. We need to find a better way to compare
+    precision = 0
     # return round(dequantization(a.val), precision) != round(
     #     dequantization(b.val), precision
     # )
-    return truncate(dequantization(a.val), precision) != truncate(
-        dequantization(b.val), precision
-    )
+    # return truncate(dequantization(a.val), precision) != truncate(
+    #     dequantization(b.val), precision
+    # ) and round(dequantization(a.val), precision) != round(
+    #     dequantization(b.val), precision
+    # )
+    a = dequantization(dequantization(a.val))
+    b = dequantization(dequantization(b.val))
+    # threhsold = 0.01
+    # if a > 1e8 or b > 1e8:
+    #     threhsold = 1e-8
+    return abs(a - b) > 1e-8
 
 
 def eq(a, b):
     """Equal comparison for quantized numbers."""
-    precision = 2
-    return truncate(dequantization(a.val), precision) == truncate(
-        dequantization(b.val), precision
-    )
+    precision = 0
+    # return truncate(dequantization(a.val), precision) == truncate(
+    #     dequantization(b.val), precision
+    # ) and round(dequantization(a.val), precision) != round(
+    #     dequantization(b.val), precision
+    # )
+    # return round(dequantization(a.val), precision) != round(
+    #     dequantization(b.val), precision
+    # )
+    a = dequantization(dequantization(a.val))
+    b = dequantization(dequantization(b.val))
+    return abs(a - b) <= 1e-8
 
 
 def float_to_mod_float(value: Union[float, "ModularInteger"]) -> float:

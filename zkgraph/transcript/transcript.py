@@ -34,7 +34,7 @@ class CommonTranscript(MerlinTranscript):
         self.append_message(label, value)
 
     def append_sympy_ff(self, label: bytes, item: ModularInteger):
-        value = int(item) % curve_order
+        value = item.val
         if self.has_label(label):
             self.proof_transcript.proof[label].append(dill.dumps(value))
         value = value.to_bytes(32, "big")
@@ -45,7 +45,7 @@ class CommonTranscript(MerlinTranscript):
             self.append_scalar(label, item)
 
     def append_sympy_ff_list(self, label: bytes, items: list[ModularInteger]):
-        values = [int(item) % curve_order for item in items]
+        values = [item.val for item in items]
         if self.has_label(label):
             self.proof_transcript.proof[label].append(dill.dumps(values))
         for value in values:
