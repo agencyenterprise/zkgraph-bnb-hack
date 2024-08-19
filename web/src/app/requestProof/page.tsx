@@ -80,7 +80,7 @@ export default function BuyPage() {
             Proof Request
           </h2>
           {
-            loading ? (
+            loading && (
               <div className="mb-6 flex justify-center">
                 <Loading size="100px" />
               </div>
@@ -168,7 +168,7 @@ export default function BuyPage() {
                     label="Continue"
                     className="mt-4"
                     disabled={
-                      formData.name === undefined || 
+                      formData.name === undefined ||
                       formData.description === undefined
                     }
                   />
