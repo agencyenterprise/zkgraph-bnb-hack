@@ -84,14 +84,6 @@ export default function BuyPage() {
               <div className="mb-6 flex justify-center">
                 <Loading size="100px" />
               </div>
-            ) : (
-              <div className="mb-6 flex justify-center sm:justify-start">
-                <Button
-                  id={`button-submit`}
-                  type="submit"
-                  label={"Generate Inference"}
-                />
-              </div>
             ) || currentStep === 1 && (
               <>
                 <h3 className="text-2xl font-bold tracking-tight text-white pb-6">
