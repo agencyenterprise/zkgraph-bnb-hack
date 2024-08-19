@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
 contract EscrowNative is Ownable {
-    using SafeERC20 for IERC20;
-    address public tokenAddress;
+    uint256 public platformFeePercentage = 0;
 
     event Deposited(address indexed payer, uint256 amount);
     event Locked(address indexed payer, uint256 amount);
@@ -20,7 +18,7 @@ contract EscrowNative is Ownable {
 
     mapping(address => uint256) private _deposits;
     mapping(address => uint256) private _locked;
-    uint256 private _payments;
+    uint256 private _fees;
 
     constructor() Ownable(msg.sender) {
     }
@@ -39,8 +37,12 @@ contract EscrowNative is Ownable {
         emit Deposited(msg.sender, msg.value);
     }
 
-    function payments() public view returns (uint256) {
-        return _payments;
+    function fees() public view returns (uint256) {
+        return _fees;
+    }
+
+    function setPlatformFeePercentage(uint256 feePercentage) public onlyOwner {
+        platformFeePercentage = feePercentage;
     }
 
     function lock(address payer, uint256 amount) public onlyOwner {
@@ -59,12 +61,16 @@ contract EscrowNative is Ownable {
         emit Unlocked(payer, amount);
     }
 
-    function pay(address payer, uint256 amount) public onlyOwner {
+    function pay(address payer, address payee, uint256 amount) public onlyOwner {
         require(_locked[payer] >= amount, "Insufficient funds locked");
 
         _deposits[payer] -= amount;
         _locked[payer] -= amount;
-        _payments += amount;
+    
+        uint256 fee = amount * platformFeePercentage / 100;
+        _fees += fee;
+
+        payable(payee).transfer(amount - fee);
 
         emit Paid(payer, amount);
     }
@@ -80,7 +86,7 @@ contract EscrowNative is Ownable {
     }
 
     function withdraw(uint256 amount) public onlyOwner {
-        require(_payments >= amount, "Insufficient funds to withdraw");
+        require(_fees >= amount, "Insufficient funds to withdraw");
 
         payable(msg.sender).transfer(amount);
 
