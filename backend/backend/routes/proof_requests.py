@@ -48,7 +48,7 @@ async def create_proof_request(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database insertion failed: {str(e)}"
         )
-    except RequestException as e:
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Relayer transaction failed: {str(e)}"
