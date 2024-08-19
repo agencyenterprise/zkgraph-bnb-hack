@@ -6,7 +6,7 @@ authors = ["kevinkons <kevin.kons@hotmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "3.12.3"
 fastapi = "^0.112.0"
 uvicorn = "^0.30.5"
 pymongo = {extras = ["srv"], version = "^4.7.3"}
