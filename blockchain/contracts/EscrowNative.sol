@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 contract EscrowNative is Ownable {
     uint256 public platformFeePercentage = 0;
@@ -67,8 +67,12 @@ contract EscrowNative is Ownable {
         _deposits[payer] -= amount;
         _locked[payer] -= amount;
     
-        uint256 fee = amount * platformFeePercentage / 100;
+        uint256 fee = (amount * platformFeePercentage) / (100 * 10**8);
         _fees += fee;
+
+        console.log("platformFeePercentage: %s", platformFeePercentage);
+        console.log("amount: %s", amount);
+        console.log("fee: %s", fee);
 
         payable(payee).transfer(amount - fee);
 
