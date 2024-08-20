@@ -7,6 +7,7 @@ from backend.blockchain.transaction import encode_transaction_data
 from backend.blockchain.defender import RelayerClient
 from pymongo.errors import PyMongoError
 import json
+import os
 from backend.services.queue_service import PikaClient
 
 router = APIRouter()
