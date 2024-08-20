@@ -6,6 +6,8 @@ from backend.schemas.proof_request_schema import list_serial, individual_serial
 from backend.blockchain.transaction import encode_transaction_data
 from backend.blockchain.defender import RelayerClient
 from pymongo.errors import PyMongoError
+import json
+from backend.services.queue_service import PikaClient
 
 router = APIRouter()
 
@@ -55,15 +57,15 @@ async def create_proof_request(
         )
 
     # Send proof request to the queue
-    # proof_request_message = {
-    #     "proof_request_id": proofRequest._id,
-    #     "ai_model_name": ai_model_name,
-    #     "ai_model_inputs": ai_model_inputs,
-    # }
+    proof_request_message = {
+        "proof_request_id": proofRequest._id,
+        "ai_model_name": ai_model_name,
+        "ai_model_inputs": ai_model_inputs,
+    }
 
-    # proof_request_message_body = json.dumps(proof_request_message)
+    proof_request_message_body = json.dumps(proof_request_message)
  
-    # pika_client = PikaClient(os.environ.get("RABBITMQ_URL"))
-    # await pika_client.publish("requests_queue", proof_request_message_body)
+    pika_client = PikaClient(os.environ.get("RABBITMQ_URL"))
+    await pika_client.publish("requests_queue", proof_request_message_body)
 
     return individual_serial(proofRequest.dict())
