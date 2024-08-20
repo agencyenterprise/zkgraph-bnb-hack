@@ -2,6 +2,11 @@ import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
+import "./scripts/deposit";
+import "./scripts/lock";
+import "./scripts/balance";
+import "./scripts/locked";
+
 dotenv.config();
 
 const DEPLOYER_PRIVATE_KEY: any = process.env.DEPLOYER_PRIVATE_KEY;

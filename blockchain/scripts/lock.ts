@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 
-task("deposit", "Deposit tokens to an address")
-  .addPositionalParam("from", "Private key depositing the tokens")
+task("lock", "Lock tokens to an address")
+  .addPositionalParam("address", "Address to lock tokens")
   .addPositionalParam("amount", "Amount of tokens to deposit (in ether)")
   .setAction(async (taskArgs, hre) => {
     const escrow = await hre.ethers.getContractAt(
@@ -9,13 +9,13 @@ task("deposit", "Deposit tokens to an address")
       process.env.ESCROW_ADDRESS!
     );
 
-    const wallet = new hre.ethers.Wallet(taskArgs.from, hre.ethers.provider);
+    const wallet = new hre.ethers.Wallet(process.env.DEPLOYER_PRIVATE_KEY!, hre.ethers.provider);
     console.log("Connected to wallet:", await wallet.getAddress());
 
-    console.log("Depositing...");
+    console.log("Locking...");
     const tx1 = await escrow
       .connect(wallet)
-      .deposit({ value: hre.ethers.parseEther(taskArgs.amount) });
+      .lock(taskArgs.address, hre.ethers.parseEther(taskArgs.amount));
     await tx1.wait();
 
     console.log("Done.");
