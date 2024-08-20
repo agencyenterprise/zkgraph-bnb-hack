@@ -15,6 +15,7 @@ pydantic = "^2.8.2"
 pycognito = "^2024.5.1"
 web3 = "^6.20.2"
 eth-abi = "^5.1.0"
+aio-pika = "^9.4.3"
 
 [build-system]
 requires = ["poetry-core"]
