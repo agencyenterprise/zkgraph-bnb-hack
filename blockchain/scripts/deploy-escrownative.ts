@@ -2,10 +2,10 @@ import hre from "hardhat";
 
 async function main() {
   console.log("Deploying...");
-  const Escrow = await hre.ethers.getContractFactory("EscrowNative");
-  const escrow = await Escrow.deploy();
+  const EscrowNative = await hre.ethers.getContractFactory("EscrowNative");
+  const escrowNative = await EscrowNative.deploy(hre.ethers.parseEther("1"), process.env.DEFENDER_RELAYER_ADDRESS!);
 
-  console.log("Contract deployed at:", await escrow.getAddress());
+  console.log("Contract deployed at:", await escrowNative.getAddress());
 }
 
 main().catch((error) => {

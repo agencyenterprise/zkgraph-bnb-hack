@@ -2,7 +2,6 @@ import hre from "hardhat";
 import { expect } from "chai";
 
 describe("Escrow", () => {
-  const decimals = 8;
   let escrowContract: any;
 
   let hub: any;
@@ -14,16 +13,15 @@ describe("Escrow", () => {
     [hub, client1, client2, worker1] = await hre.ethers.getSigners();
 
     const Escrow = await hre.ethers.getContractFactory("EscrowNative");
-    escrowContract = await Escrow.deploy();
-
-    await escrowContract.setPlatformFeePercentage(hre.ethers.parseUnits("1", decimals));
+    escrowContract = await Escrow.deploy(hre.ethers.parseEther("1"), process.env.DEFENDER_RELAYER_ADDRESS!);
   });
 
   describe("Deployment", () => {
     it("When deploying should set owner address", async () => {
       // Assert
       expect(await escrowContract.owner()).to.equal(hub.address);
-      expect(await escrowContract.platformFeePercentage()).to.equal(hre.ethers.parseUnits("1", decimals));
+      expect(await escrowContract.platformFeePercentage()).to.equal(hre.ethers.parseEther("1"));
+      expect(await escrowContract.relayer()).to.equal(process.env.DEFENDER_RELAYER_ADDRESS!);
     });
   });
 
@@ -46,16 +44,16 @@ describe("Escrow", () => {
         client2.address
       );
 
-      expect(escrowTokenBalance).to.equal(hre.ethers.parseUnits("0", decimals));
-      expect(client1EscrowBalance).to.equal(hre.ethers.parseUnits("0", decimals));
-      expect(client2EscrowBalance).to.equal(hre.ethers.parseUnits("0", decimals));
+      expect(escrowTokenBalance).to.equal(hre.ethers.parseEther("0"));
+      expect(client1EscrowBalance).to.equal(hre.ethers.parseEther("0"));
+      expect(client2EscrowBalance).to.equal(hre.ethers.parseEther("0"));
 
       // Act
       await escrowContract.connect(client1).deposit({
-        value: hre.ethers.parseUnits("3", decimals),
+        value: hre.ethers.parseEther("3"),
       });
       await escrowContract.connect(client2).deposit({
-        value: hre.ethers.parseUnits("5", decimals),
+        value: hre.ethers.parseEther("5"),
       });
 
       // Assert
@@ -73,18 +71,18 @@ describe("Escrow", () => {
 
       expect(client1TokenBalanceA).to.greaterThan(client1TokenBalanceB);
       expect(client2TokenBalanceA).to.greaterThan(client2TokenBalanceB);
-      expect(escrowTokenBalance).to.equal(hre.ethers.parseUnits("8", decimals));
+      expect(escrowTokenBalance).to.equal(hre.ethers.parseEther("8"));
 
-      expect(client1EscrowBalance).to.equal(hre.ethers.parseUnits("3", decimals));
-      expect(client2EscrowBalance).to.equal(hre.ethers.parseUnits("5", decimals));
+      expect(client1EscrowBalance).to.equal(hre.ethers.parseEther("3"));
+      expect(client2EscrowBalance).to.equal(hre.ethers.parseEther("5"));
     });
   });
 
   describe("Payment", () => {
-    it.only("Clients should make payments through escrow", async () => {
+    it("Clients should make payments through escrow", async () => {
       // Arrange
-      await escrowContract.connect(client1).deposit({ value: hre.ethers.parseUnits("3", decimals) });
-      await escrowContract.connect(client2).deposit({ value: hre.ethers.parseUnits("5", decimals) });
+      await escrowContract.connect(client1).deposit({ value: hre.ethers.parseEther("3") });
+      await escrowContract.connect(client2).deposit({ value: hre.ethers.parseEther("5") });
 
       let client1TokenBalanceA = await hre.ethers.provider.getBalance(
         client1.address
@@ -100,17 +98,17 @@ describe("Escrow", () => {
         client1.address
       );
 
-      expect(escrowTokenBalance).to.equal(hre.ethers.parseUnits("8", decimals));
-      expect(fees).to.equal(hre.ethers.parseUnits("0", decimals));
-      expect(client1EscrowBalance).to.equal(hre.ethers.parseUnits("3", decimals));
+      expect(escrowTokenBalance).to.equal(hre.ethers.parseEther("8"));
+      expect(fees).to.equal(hre.ethers.parseEther("0"));
+      expect(client1EscrowBalance).to.equal(hre.ethers.parseEther("3"));
 
       // Act -> Client1 pays Worker1
       await escrowContract
         .connect(hub)
-        .lock(client1.address, hre.ethers.parseUnits("1", decimals));
+        .lock(client1.address, hre.ethers.parseEther("1"));
       await escrowContract
         .connect(hub)
-        .pay(client1.address, worker1.address, hre.ethers.parseUnits("1", decimals));
+        .pay(client1.address, worker1.address, hre.ethers.parseEther("1"));
 
       // Assert -> Client1 pays Worker1
       let client1TokenBalanceB = await hre.ethers.provider.getBalance(
@@ -126,10 +124,10 @@ describe("Escrow", () => {
       client1EscrowBalance = await escrowContract.balanceOf(client1.address);
 
       expect(client1TokenBalanceA).to.equal(client1TokenBalanceB);
-      expect(worker1TokenBalanceB).to.equal(worker1TokenBalanceA + hre.ethers.parseUnits("0.99", decimals)); // Changed Amount minus platform fee
-      expect(escrowTokenBalance).to.equal(hre.ethers.parseUnits("7.01", decimals)); // Changed -Amount minus platform fee
-      expect(fees).to.equal(hre.ethers.parseUnits("0.01", decimals)); // Changed platform fee
-      expect(client1EscrowBalance).to.equal(hre.ethers.parseUnits("2", decimals)); // Changed -Amount
+      expect(worker1TokenBalanceB).to.equal(worker1TokenBalanceA + hre.ethers.parseEther("0.99")); // Changed Amount minus platform fee
+      expect(escrowTokenBalance).to.equal(hre.ethers.parseEther("7.01")); // Changed -Amount minus platform fee
+      expect(fees).to.equal(hre.ethers.parseEther("0.01")); // Changed platform fee
+      expect(client1EscrowBalance).to.equal(hre.ethers.parseEther("2")); // Changed -Amount
     });
   });
 });
