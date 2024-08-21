@@ -1,7 +1,6 @@
 from typing import Callable
 
 import numpy as np
-from zkgraph.graph.engine import Value
 
 from onnx import NodeProto
 
@@ -17,6 +16,7 @@ class ElementWise:
     def from_onnx(cls, onnx_node: NodeProto):
 
         if onnx_node.op_type == "Relu":
+
             func = lambda x: x.relu()
 
         return cls(func)

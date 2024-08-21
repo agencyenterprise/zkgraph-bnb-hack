@@ -4,7 +4,6 @@ import numpy as np
 
 from zkgraph.graph.engine import Value
 from zkgraph.ops import elementwise, gemm, conv
-from zkgraph.polynomials.field import dequantization, quantization
 
 onnx_to_op = {"Gemm": gemm.Gemm, "Relu": elementwise.ElementWise, "Conv": conv.Conv}
 
@@ -17,7 +16,7 @@ def from_onnx(onnx_model, input_data):
         tensor = onnx.numpy_helper.to_array(initializer)
         calculated_values[initializer.name] = np.vectorize(Value)(tensor)
 
-    ## store input value
+    # store input value
     input_name = onnx_model.graph.input[0].name
     calculated_values[input_name] = np.vectorize(Value)(input_data)
 
