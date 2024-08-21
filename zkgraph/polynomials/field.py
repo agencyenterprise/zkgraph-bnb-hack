@@ -196,7 +196,7 @@ def qge(a, b):
 def qne(a, b):
     """Not equal comparison for quantized numbers."""
     # @TODO: This is a temporary fix to avoid floating point errors. We need to find a better way to compare
-    precision = 0
+    # precision = 0
     # return round(dequantization(a.val), precision) != round(
     #     dequantization(b.val), precision
     # )
@@ -215,7 +215,7 @@ def qne(a, b):
 
 def eq(a, b):
     """Equal comparison for quantized numbers."""
-    precision = 0
+    # precision = 0
     # return truncate(dequantization(a.val), precision) == truncate(
     #     dequantization(b.val), precision
     # ) and round(dequantization(a.val), precision) != round(

@@ -340,7 +340,7 @@ class Conv:
 
         if len(params["X"].shape) < 3:
             raise ValueError(
-                f"X must have at least 3 dimensions but its shape "
+                "X must have at least 3 dimensions but its shape "
                 + f"is {params['X'].shape}."
             )
 

@@ -127,7 +127,6 @@ class ZkProver:
             for j in range(1, len(layer.gates)):
                 gate = layer.gates[j]
                 u = gate.u
-                v = gate.v
                 if u is None or u >= len(self.C.circuit[i - 1].gates):
                     raise ValueError(
                         f"Invalid circuit: gate {j} in layer {i} references non-existing gates"
@@ -143,11 +142,7 @@ class ZkProver:
         # Evaluate the input layer
         for g, gate_info in enumerate(self.C.circuit[0].gates):
             assert gate_info.ty == GateType.Input
-            try:
-                self.circuit_value[0][g] = self.domain(gate_info.u)
-            except:
-                breakpoint()
-                print(gate_info.u)
+            self.circuit_value[0][g] = self.domain(gate_info.u)
 
         # Evaluate each subsequent layer
         for i in range(1, self.C.size):
@@ -851,11 +846,9 @@ class ZkProver:
     def keygen_and_commit(self, input_bit_length: int, key_gen_time: float):
         self.input_mpz = [self.zero] * ((1 << input_bit_length) + 1)
         for i in range(1 << input_bit_length):
-            g = 1
             gate = self.C.circuit[0].gates[i]
             ty = gate.ty
             u = gate.u
-            v = gate.v
             if ty == GateType.Input:
                 self.input_mpz[i] = u
             else:

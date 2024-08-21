@@ -1,8 +1,6 @@
 # import random
 # from typing import List
 from onnx import NodeProto
-
-from zkgraph.graph.engine import Value
 from zkgraph.ops.onnx_utils import get_proto_attribute_value
 import numpy as np
 

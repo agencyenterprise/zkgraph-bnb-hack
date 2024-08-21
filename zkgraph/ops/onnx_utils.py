@@ -38,7 +38,7 @@ def generate_small_iris_onnx_model(onnx_output_path="tests/assets/iris_model.onn
     from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import StandardScaler
 
-    ### create a small sample onnx model
+    # create a small sample onnx model
     iris = load_iris()
     X = iris.data[:100, [0, 2]]  # We only take the first two features for simplicity
     y = iris.target[:100]

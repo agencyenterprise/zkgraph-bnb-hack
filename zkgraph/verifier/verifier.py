@@ -147,7 +147,7 @@ class ZkVerifier:
     ):
         previous_random = self.domain.zero
         for j in range(previous_bit_len):
-            last = j == self.C.circuit[i - 1].bitLength - 1
+            # last = j == self.C.circuit[i - 1].bitLength - 1
             poly: Union[QuadraticPoly, QuintuplePoly] = (
                 self.transcript.proof_transcript.retrieve_transcript_by_label(
                     b"phase_2"
@@ -242,7 +242,8 @@ class ZkVerifier:
             self.one_minus_r_1[i] = self.domain.one - self.r_1[i]
         for i in list(reversed(range(1, self.C.total_depth))):
             previous_bit_len = self.C.circuit[i - 1].bitLength
-            rho = self.generate_randomness(size=1, label="rho")[0]
+            # rho = self.generate_randomness(size=1, label="rho")[0]
+            self.generate_randomness(size=1, label="rho")[0]
             alpha_beta_sum = (
                 self.transcript.proof_transcript.retrieve_transcript_by_label(
                     b"alpha_beta_sum"
