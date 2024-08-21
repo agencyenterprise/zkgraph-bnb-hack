@@ -11,3 +11,4 @@ client = MongoClient(uri)
 db = client.fifty_b_hub
 
 proof_requests_collection = db["proof_requests"]
+users_collection = db["users"]
