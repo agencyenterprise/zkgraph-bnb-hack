@@ -61,25 +61,26 @@ class ZeroKProofTranscript(Proof):
         self.label_counter = {key: 0 for key in keys}
 
     def retrieve_transcript_by_label(self, label: bytes, idx: Optional[int] = None):
-
+        domain = FiniteField(curve_order)
         if label not in self.keys:
             raise ValueError(f"Label {label} not found in proof transcript")
         if idx is not None:
             if idx >= len(self.proof[label]):
                 raise ValueError(f"Index {idx} out of bounds for label {label}")
             self.label_counter[label] = idx + 1
-            return self.proof[label][idx]
+            return domain(self.proof[label][idx], False)
 
         last_idx = self.label_counter[label]
         if last_idx >= len(self.proof[label]):
             raise ValueError(f"Index {idx} out of bounds for label {label}")
         value = self.proof[label][last_idx]
+
         self.label_counter[label] += 1
         if label == b"phase_1" or label == b"phase_2" or label == b"final_gkr_round":
-            coefficients = dill.loads(value)
+            coefficients = [domain(x, False) for x in dill.loads(value)]
             if not isinstance(coefficients, list):
                 raise ValueError(f"Expected list for label {label}")
-            domain = FiniteField(curve_order)
+
             if len(coefficients) == 6:
                 return QuintuplePoly(domain, *coefficients)
             elif len(coefficients) == 3:
@@ -88,7 +89,7 @@ class ZeroKProofTranscript(Proof):
                 f"Invalid number of coefficients for label {label}, must be 3 or 6"
             )
 
-        return dill.loads(value)
+        return domain(dill.loads(value), False)
 
     def flatten(self):
         return self.proof
