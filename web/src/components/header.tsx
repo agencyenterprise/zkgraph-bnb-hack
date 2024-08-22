@@ -31,13 +31,7 @@ export default function Example() {
         <div className="hidden sm:flex">
           <Link href="/">
             <span className="sr-only">ZeroK</span>
-            <Image
-              className="-my-8 -mx-6"
-              width={220}
-              height={220}
-              src="/logo.svg"
-              alt=""
-            />
+            <Image width={130} height={130} src="/logo.svg" alt="" />
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -76,13 +70,7 @@ export default function Example() {
           <div className="flex items-center justify-between">
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">ZeroK</span>
-              <Image
-                className="-my-8 -mx-6"
-                width={200}
-                height={200}
-                src="/logo.svg"
-                alt=""
-              />
+              <Image width={110} height={110} src="/logo.svg" alt="" />
             </Link>
             <button
               type="button"
