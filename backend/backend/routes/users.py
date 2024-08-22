@@ -26,14 +26,14 @@ async def create_api_token(
             users_collection.update_one(
                 {"address": request.address},
                 {"$set": {
-                    "token": api_token,
+                    "api_token": api_token,
                     "updated_at": datetime.datetime.utcnow()
                 }}
             )
         else:
             token_document = {
                 "address": request.address,
-                "token": api_token,
+                "api_token": api_token,
                 "created_at": datetime.datetime.utcnow(),
             }
             
@@ -58,6 +58,6 @@ def generate_api_token(length=32):
 
 def generate_unique_api_token(length=32):
     while True:
-        token = generate_api_token(length)
-        if not users_collection.find_one({"token": token}):
-            return token
+        api_token = generate_api_token(length)
+        if not users_collection.find_one({"api_token": api_token}):
+            return api_token

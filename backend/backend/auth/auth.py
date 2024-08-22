@@ -19,7 +19,6 @@ async def authenticate(auth_token: str = Header(None)):
 async def authenticate_w_api_token(api_token: str = Header(None)):
     credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                         detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
-
     user = get_user_api_token(api_token)
     if user is None:
         raise credential_exception
