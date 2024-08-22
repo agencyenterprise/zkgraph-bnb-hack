@@ -1,31 +1,30 @@
 import datetime
 import secrets
 import string
-from fastapi import APIRouter, Body, HTTPException, status, Depends
-from backend.auth.auth import authenticate
-from backend.config.database import users_collection
-from backend.schemas.proof_request_schema import list_serial, individual_serial
+from fastapi import APIRouter, HTTPException, status, Depends
 from pymongo.errors import PyMongoError
 from pydantic import BaseModel
+from backend.auth.auth import authenticate
+from backend.config.database import users_collection
 
 router = APIRouter()
 
-class WalletRequest(BaseModel):
-    wallet: str
+class CreateApiTokenRequest(BaseModel):
+    address: str
 
 @router.post("/api_token")
 async def create_api_token(
-    request: WalletRequest,
+    request: CreateApiTokenRequest,
     _ = Depends(authenticate),
 ):
     try:
         api_token = generate_unique_api_token()
 
-        existing_token = users_collection.find_one({"wallet": request.wallet})
+        existing_token = users_collection.find_one({"address": request.address})
 
         if existing_token:
             users_collection.update_one(
-                {"wallet": request.wallet},
+                {"address": request.address},
                 {"$set": {
                     "token": api_token,
                     "updated_at": datetime.datetime.utcnow()
@@ -33,7 +32,7 @@ async def create_api_token(
             )
         else:
             token_document = {
-                "wallet": request.wallet,
+                "address": request.address,
                 "token": api_token,
                 "created_at": datetime.datetime.utcnow(),
             }
