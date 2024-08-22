@@ -19,6 +19,18 @@ from zkgraph.graph.preprocessor import (
 from zkgraph.graph.base import LayerList, BaseValue
 
 
+def clear(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            raise e
+        finally:
+            LayerList.clear()
+
+    return inner
+
+
 class Value(BaseValue):
     """stores a single scalar value and its gradient"""
 
@@ -237,6 +249,7 @@ class Value(BaseValue):
         return to_circuit(output, Value, Value, debug=debug)
 
     @staticmethod
+    @clear
     def compile_layered_circuit(output: "Value", debug: bool = False):
         return compile_layered_circuit(output, Value, Value, debug=debug)
 

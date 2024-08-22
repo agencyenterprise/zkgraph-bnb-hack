@@ -24,7 +24,7 @@ def test_operations():
         dd = d**2
         ed = dd / d
         e = ed**2
-        assert dequantization(e) == round((((a + b) * b) ** 2), 2)
+        assert dequantization(e) == (((a + b) * b) ** 2)
         assert dequantization(ModularInteger(1) / ModularInteger(2)) == 0.5
         assert -aq == ModularInteger(-a)
 
