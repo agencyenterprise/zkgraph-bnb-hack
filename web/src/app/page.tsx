@@ -7,13 +7,13 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="mx-auto max-w-2xl py-16 sm:py-32 lg:py-36 px-4 ">
+    <div className="mx-auto max-w-2xl py-20 sm:py-36 px-4 text-secondary-100">
       <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-        <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-          Public code and more techinical info{" "}
+        <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-secondary-400 ring-1 ring-tertiary-600 hover:ring-tertiary-400">
+          Public code and more technical info{" "}
           <Link
             href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
-            className="font-semibold text-white"
+            className="font-semibold text-primary-500 hover:text-primary-400"
           >
             <span className="absolute inset-0" aria-hidden="true" />
             Read more <span aria-hidden="true">&rarr;</span>
@@ -21,10 +21,10 @@ export default function Home() {
         </div>
       </div>
       <div className="text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-5xl">
+        <h1 className="text-2xl font-bold tracking-tight text-primary-500 sm:text-5xl">
           A ZKML framework based on the Virgo++/Libra protocol
         </h1>
-        <p className="mt-6 text-lg leading-8 text-gray-300">
+        <p className="mt-6 text-lg leading-8 text-secondary-200">
           This application implements on-chain verification using the linear
           prover time zk protocol Virgo++/Libra. It is designed to generate
           proofs for small ONNX graphs for MLP and Numpy computations.
@@ -40,7 +40,7 @@ export default function Home() {
           />
           <a
             href="/requestProof"
-            className="text-sm font-semibold leading-6 text-white"
+            className="text-sm font-semibold leading-6 text-secondary-100 hover:text-secondary-400"
           >
             Learn more <span aria-hidden="true">→</span>
           </a>
