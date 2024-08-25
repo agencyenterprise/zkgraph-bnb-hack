@@ -12,6 +12,7 @@ dill = "^0.3.8"
 py-ecc = "^7.0.1"
 onnx = "^1.16.2"
 onnxruntime = "^1.19.0"
+sympy = "^1.13.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"

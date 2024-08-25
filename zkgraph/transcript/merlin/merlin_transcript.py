@@ -1,3 +1,6 @@
+# Code extracted from the https://github.com/NOOMA-42/pylookup/tree/main/src/plookup repository
+
+
 from zkgraph.transcript.merlin.strobe import Strobe128
 
 MERLIN_PROTOCOL_LABEL = b"Merlin v1.0"

@@ -1,4 +1,7 @@
-from typing import List, Any
+# The code below is based on the Libra implementation found at https://github.com/sunblaze-ucb/Libra
+
+
+from typing import List
 from zkgraph.polynomials.field import FiniteField, PRIME_MODULO
 from zkgraph.types.gate import GateType
 
