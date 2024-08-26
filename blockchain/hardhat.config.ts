@@ -6,6 +6,7 @@ import "./scripts/deposit";
 import "./scripts/lock";
 import "./scripts/balance";
 import "./scripts/locked";
+import "./scripts/get-config";
 
 dotenv.config();
 

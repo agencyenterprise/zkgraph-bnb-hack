@@ -8,7 +8,6 @@ from services.queue_service import PikaClient
 from zkgraph.graph.engine import Value
 from zkgraph.ops.from_onnx import from_onnx
 from zkgraph.prover.prover import ZkProver
-from zkgraph.verifier.verifier import ZkVerifier
 
 async def generate_proof(consumer_id: str, proof_request_id: str, ai_model_name: str, ai_model_inputs: str):
   print('Generating proof for request ' + proof_request_id + ' using worker: ' + consumer_id)
@@ -32,17 +31,15 @@ async def generate_proof(consumer_id: str, proof_request_id: str, ai_model_name:
   layered_circuit, _ = Value.compile_layered_circuit(graph_output)
 
   prover = ZkProver(layered_circuit)
+  prover.prove()
   proof_transcript = prover.proof_transcript.to_bytes()
   # print(proof_transcript)
-
-  # verifier = ZkVerifier(layered_circuit)
-  # verification = verifier.run_verifier(proof_transcript)
-  # print(verification)
 
   pika_client = PikaClient(os.environ.get('RABBITMQ_URL'))
 
   await pika_client.publish("proofs_queue", json.dumps({
       'proof_request_id': proof_request_id,
+      'worker_wallet': os.getenv("WORKER_WALLET"),
       'circuit': base64.b64encode(dill.dumps(layered_circuit)).decode(),
       'proof': base64.b64encode(proof_transcript).decode()
   }))
