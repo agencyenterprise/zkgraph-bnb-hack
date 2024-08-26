@@ -69,7 +69,7 @@ def main():
         print(f"Time to prove: {time.time() - start}")
         proof_transcript = prover.proof_transcript.to_bytes()
         print(f"Time to prove: {time.time() - start}")
-        # start = time.time()
+        start = time.time()
         verifier = ZkVerifier(layered_circuit)
         verifier.run_verifier(proof_transcript=proof_transcript)
         print(f"Time to verify: {time.time() - start}")

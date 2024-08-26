@@ -7,17 +7,29 @@ from zkgraph.polynomials.field import (
     ModularInteger,
     PRIME_MODULO as curve_order,
 )
-from typing import List
+from typing import List, Dict
 from zkgraph.transcript.transcript import CommonTranscript
 from zkgraph.types.proof import ZeroKProofTranscript
 from zkgraph.polynomials.poly import QuadraticPoly, QuintuplePoly
 from typing import Union
 
+# from zkgraph.commitments.mkzg.mkzg import (
+#     verify_random_polynomial_R,
+#     verify_zk_sumcheck_polynomial,
+#     load_pp,
+# )
+
 DOMAIN = FiniteField(curve_order)
 
 
 class ZkVerifier:
-    def __init__(self, circuit: LayeredCircuit, domain: FiniteField = DOMAIN):
+    def __init__(
+        self,
+        circuit: LayeredCircuit,
+        domain: FiniteField = DOMAIN,
+        mkzg: bool = True,
+        public_parameters: Dict[str, str] = {"r_pp": None, "zk_pp": None},
+    ):
         self.C = circuit
         self.domain = domain
         self.beta_g_r0: List[ModularInteger] = []
@@ -36,6 +48,16 @@ class ZkVerifier:
         self.transcript = CommonTranscript(b"zerok", self.proof_transcript)
         self.one = self.domain.one
         self.zero = self.domain.zero
+        self.mkzg = mkzg
+        self.random_polynomial_r_pp = None
+        self.zk_sumcheck_pp = None
+        # if self.mkzg:
+        #     if public_parameters["r_pp"] is None or public_parameters["zk_pp"] is None:
+        #         raise ValueError(
+        #             "r_pp and zk_pp must be provided when using the MKZG PCS"
+        #         )
+        #     self.random_polynomial_r_pp = load_pp(public_parameters["r_pp"])
+        #     self.zk_sumcheck_pp = load_pp(public_parameters["zk_pp"])
 
     def mult(self, depth: int) -> ModularInteger:
         ret = self.domain.zero
@@ -263,6 +285,75 @@ class ZkVerifier:
             )
             self.transcript.append_sympy_ff(b"direct_relay_value", direct_relay_value)
             r_c = self.generate_randomness(size=1, label="r_c")
+            # if self.mkzg:
+            #     if len(self.C.circuit) - 1 != i:
+            #         random_point = [self.prepreu1, r_c[0]]
+            #         random_r_commitment = (
+            #             self.transcript.proof_transcript.retrieve_transcript_by_label(
+            #                 b"random_r_commitment"
+            #             )
+            #         )
+            #         openings = (
+            #             self.transcript.proof_transcript.retrieve_transcript_by_label(
+            #                 b"random_r_openings"
+            #             )
+            #         )
+            #         evaluation = (
+            #             self.transcript.proof_transcript.retrieve_transcript_by_label(
+            #                 b"random_r_evaluation"
+            #             )
+            #         )
+
+            #         self.transcript.append_curve_point(
+            #             b"random_r_commitment", random_r_commitment
+            #         )
+            #         self.transcript.append_curve_point(b"random_r_openings", openings)
+            #         self.transcript.append_sympy_ff(b"random_r_evaluation", evaluation)
+            #         assert verify_random_polynomial_R(
+            #             random_r_commitment,
+            #             random_point,
+            #             evaluation,
+            #             openings,
+            #             self.random_polynomial_r_pp,
+            #             curve_order,
+            #         )
+            #         random_point = [*self.r_u, *self.r_v, r_c[0]]
+            #         half_maskpoly = len(self.maskpoly) // 2
+            #         if half_maskpoly >= len(random_point):
+            #             random_point_size_to_fill = abs(
+            #                 half_maskpoly - len(random_point)
+            #             )
+            #             random_point.extend(
+            #                 self.generate_randomness(
+            #                     size=random_point_size_to_fill, label="r_c"
+            #                 )
+            #             )
+            #         else:
+            #             random_point = random_point[:half_maskpoly]
+            #         zk_sumcheck_commitment = (
+            #             self.transcript.proof_transcript.retrieve_transcript_by_label(
+            #                 b"maskpoly_commitment"
+            #             )
+            #         )
+            #         evaluation, openings = prove_zk_sumcheck_polynomial(
+            #             self.maskpoly_gmp,
+            #             random_point,
+            #             self.zk_sumcheck_pp,
+            #             curve_order,
+            #         )
+            #         self.transcript.append_curve_point(
+            #             b"maskpoly_commitment", zk_sumcheck_commitment
+            #         )
+            #         self.transcript.append_curve_point(b"maskpoly_openings", openings)
+            #         self.transcript.append_sympy_ff(b"maskpoly_evaluation", evaluation)
+            #         assert verify_zk_sumcheck_polynomial(
+            #             self.r_f_mask_poly,
+            #             random_point,
+            #             evaluation,
+            #             openings,
+            #             self.zk_sumcheck_pp,
+            #             curve_order,
+            #         )
             self.one_minus_r_u = [self.domain.zero] * previous_bit_len
             self.one_minus_r_v = [self.domain.zero] * previous_bit_len
             for j in range(previous_bit_len):

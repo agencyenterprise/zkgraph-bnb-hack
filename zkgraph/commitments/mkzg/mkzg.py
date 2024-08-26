@@ -1,11 +1,14 @@
 # Code implemented from scratch based on the paper https://eprint.iacr.org/2011/587.pdf
 # Implemented during the BnB Q3 Hackathon 2024
 
+import os
 from random import randint
 from itertools import product
 from typing import Union
 from sympy.core.backend import Symbol
-from sympy import Poly, reduced, FiniteField
+from sympy import Poly, reduced, FiniteField, symbols
+from sympy.polys.domains.modularinteger import ModularInteger
+from zkgraph.polynomials.field import ModularInteger as FixedPointModularInteger
 from zkgraph.commitments.mkzg.ecc import (
     G1,
     G2,
@@ -17,47 +20,11 @@ from zkgraph.commitments.mkzg.ecc import (
     TG1P,
     TG2P,
     TPP,
+    PPStore,
+    PPType,
 )
 import dill
 from concurrent.futures import ProcessPoolExecutor
-from collections.abc import MutableMapping
-
-
-class PPStore(MutableMapping):
-    def __init__(self, *args, **kwargs):
-        self.store = dict()
-        self.update(dict(*args, **kwargs))
-
-    def __getitem__(self, key):
-        variables_0 = list(self.store.keys())[0]
-        if not isinstance(variables_0, tuple):
-            raise ValueError("Key must be a tuple")
-        if not isinstance(key, tuple):
-            raise ValueError("Key must be a tuple")
-        len_key = len(key)
-        if len_key <= len(variables_0):
-            size_diff = len(variables_0) - len_key
-            key = (0,) * (size_diff) + key
-        else:
-            raise ValueError(
-                "Ptau key can hold up to {} values".format(len(variables_0))
-            )
-        return self.store[self._keytransform(key)]
-
-    def __setitem__(self, key, value):
-        self.store[self._keytransform(key)] = value
-
-    def __delitem__(self, key):
-        del self.store[self._keytransform(key)]
-
-    def __iter__(self):
-        return iter(self.store)
-
-    def __len__(self):
-        return len(self.store)
-
-    def _keytransform(self, key):
-        return key
 
 
 def save_pp(PP: TPP, filename: str = "power_of_tau.ptau") -> None:
@@ -153,6 +120,7 @@ def SequencialKeyGen(
     max_degree: int,
     modulo: int = curve_order,
     univariate: int = False,
+    generate_zk_sumcheck_pp: bool = False,
 ) -> TPP:
     """Generate the public parameters (powers of tau) for the multilinear map
 
@@ -160,21 +128,32 @@ def SequencialKeyGen(
         num_variables (int): Max number of variables in the polynomial
         max_degree (int): Maximum degree of the polynomial
         modulo (int, optional): Prime modulus. Defaults to curve_order.
+        univariate (int, optional): Flag to indicate if the polynomial is univariate. Defaults to False.
+        generate_zk_sumcheck_pp (bool, optional): Flag to indicate if the zk sumcheck public parameters should be generated. Defaults to False.
 
     Returns:
         TPP: The public parameters
     """
     # Base point of G1 from BLS G1 primitives
     t = [randint(1, modulo - 1) for _ in range(num_variables)]
+    pp_type = PPType.EXPONENTIAL
+    if generate_zk_sumcheck_pp:
+        new_t = [1] * num_variables * 2
+        for i in range(num_variables):
+            new_t[2 * i] = t[i]
+            new_t[2 * i + 1] = t[i] ** 2
+        t = new_t
+        univariate = True
+        pp_type = PPType.LINEAR
     # exponent list size: (max_degree + 1)^num_variables
     if univariate:
         exponents_list = compute_univariate_exponent_list(max_degree, num_variables)
     else:
         exponents_list = list(product(range(max_degree + 1), repeat=num_variables))
     Wn_d_g1 = power_of_tau_step(G1, exponents_list, t, modulo)
-    G1PK = (G1, PPStore(Wn_d_g1))
+    G1PK = (G1, PPStore(Wn_d_g1, pp_type=pp_type))
     Wn_d_g2 = power_of_tau_step(G2, exponents_list, t, modulo)
-    G2PK = (G2, PPStore(Wn_d_g2))
+    G2PK = (G2, PPStore(Wn_d_g2, pp_type=pp_type))
     return G1PK, G2PK
 
 
@@ -197,13 +176,15 @@ def DistributedKeyGen(
     """
     t = [randint(1, modulo - 1) for _ in range(num_variables)]
     exponents_list = list(product(range(max_degree + 1), repeat=num_variables))
-    chunk_size = len(exponents_list) // chunk_len
+    num_cores = os.cpu_count()
+    # chunk_size = len(exponents_list) // chunk_len
+    chunk_size = max(len(exponents_list) // (num_cores * 4), 1)
     exponents_list_chunk = divide_list_into_chunks(
         exponents_list, chunk_size=chunk_size
     )
     Wn_d_g1 = {}
     Wn_d_g2 = {}
-    with ProcessPoolExecutor() as executor:
+    with ProcessPoolExecutor(max_workers=num_cores) as executor:
         g1_promises = [
             executor.submit(power_of_tau_step, G1, exponents_chunk, t, modulo)
             for exponents_chunk in exponents_list_chunk
@@ -217,10 +198,17 @@ def DistributedKeyGen(
         g2_chunk = g2_promises[idx].result()
         Wn_d_g1 = {**Wn_d_g1, **g1_chunk}
         Wn_d_g2 = {**Wn_d_g2, **g2_chunk}
+    G1PK = (G1, PPStore(Wn_d_g1))
+    G2PK = (G2, PPStore(Wn_d_g2))
+    return G1PK, G2PK
 
 
 def KeyGen(
-    num_variables: int, max_degree: int, modulo: int = curve_order, univariate=False
+    num_variables: int,
+    max_degree: int,
+    modulo: int = curve_order,
+    univariate=False,
+    generate_zk_sumcheck_pp: bool = False,
 ) -> TPP:
     """Generate the public parameters (powers of tau) for the multilinear map
 
@@ -237,11 +225,19 @@ def KeyGen(
     # NOTE: THIS IMPLEMENTATION IS NOT GENERATING THE POWERS OF TAU CORRECTLY.
     # YOU MUST ALSO IMPLEMENT THE ADDITIONAL gˆ(at) POINTS
     # TO ALLOW CHECKING THE KNOWLEDGE OF THE EXPONENT.
+    if generate_zk_sumcheck_pp:
+        univariate = True
     if not univariate:
         size = (max_degree + 1) ** num_variables
         if size > 2**14:
             return DistributedKeyGen(num_variables, max_degree, modulo)
-    return SequencialKeyGen(num_variables, max_degree, modulo, univariate=univariate)
+    return SequencialKeyGen(
+        num_variables,
+        max_degree,
+        modulo,
+        univariate=univariate,
+        generate_zk_sumcheck_pp=generate_zk_sumcheck_pp,
+    )
 
 
 def SumcheckGKRKeyGen(
@@ -506,3 +502,160 @@ def Verify(
     left_hand_pairing = pairing(left_hand_side, G1)
     # Compare the left and right hand sides
     return left_hand_pairing == right_hand_side
+
+
+def convert_to_sympy_ff(
+    values: list[FixedPointModularInteger], domain: FiniteField
+) -> list[Symbol]:
+    """Convert the values to sympy finite field elements
+
+    Args:
+        values (list[int]): The list of values to convert
+        modulo (int, optional): The prime modulo. Defaults to curve_order.
+
+    Returns:
+        list[Symbol]: The sympy finite field elements
+    """
+
+    return [
+        (
+            domain(val.val)
+            if isinstance(val, FixedPointModularInteger)
+            else int(val) % domain.characteristic()
+        )
+        for val in values
+    ]
+
+
+def create_random_polynomial_R(
+    values: list[ModularInteger], domain: FiniteField
+) -> Poly:
+    # R(x,y) = a0 + a1*x0 + a2*x1 + a3*x0*x1 + a4*x0^2 + a5*x1^2
+    x0, x1 = symbols("x0 x1")
+    a0, a1, a2, a3, a4, a5 = values
+    return Poly(
+        a0 + a1 * x0 + a2 * x1 + a3 * x0 * x1 + a4 * x0**2 + a5 * x1**2,
+        *[x0, x1],
+        domain=domain,
+    ), [x0, x1]
+
+
+def commit_random_polynomial_R(
+    values: list[FixedPointModularInteger], PP: TPP, modulo: int = curve_order
+):
+    domain = FiniteField(modulo)
+    values = convert_to_sympy_ff(values, domain=domain)
+    R, _ = create_random_polynomial_R(values, domain=domain)
+    _, G2PK = PP
+    return Commit(G2PK, R, modulo)
+
+
+def prove_random_polynomial_R(
+    values: list[FixedPointModularInteger],
+    random_point: list[FixedPointModularInteger],
+    PP: TPP,
+    modulo: int = curve_order,
+):
+    domain = FiniteField(modulo)
+    values = convert_to_sympy_ff(values, domain=domain)
+    random_point = convert_to_sympy_ff(random_point, domain=domain)
+    R, variables = create_random_polynomial_R(values, domain=domain)
+    G1PK, _ = PP
+    evaluation, openings = Open(G1PK, R, variables, random_point, domain)
+    return evaluation, openings
+
+
+def verify_random_polynomial_R(
+    commitment: TG2P,
+    random_point: list[FixedPointModularInteger],
+    evaluation: int,
+    openings: list[Union[TG2P, Poly]],
+    PP: TPP,
+    modulo: int = curve_order,
+):
+    domain = FiniteField(modulo)
+    random_point = convert_to_sympy_ff(random_point, domain=domain)
+    random_point = [int(val) for val in random_point]
+    return Verify(PP, commitment, evaluation, openings, random_point, modulo)
+
+
+def create_zk_sumcheck_polynomial(
+    values: list[FixedPointModularInteger], domain: FiniteField
+) -> Poly:
+    # R(x,y,...length) = a0 + a1*x0 + a2*x0**2 + a3*x1 + a4*x1**2 + ... + a_n*xn**2
+    variables = symbols(" ".join([f"x{i}" for i in range(len(values) - 1)]))
+    return (
+        Poly(
+            values[0]
+            + sum([values[i] * variables[i - 1] for i in range(1, len(values))]),
+            *variables,
+            domain=domain,
+        ),
+        variables,
+    )
+
+
+def commit_zk_sumcheck_polynomial(
+    values: list[FixedPointModularInteger],
+    PP: TPP,
+    modulo: int = curve_order,
+):
+    domain = FiniteField(modulo)
+    values = convert_to_sympy_ff(values, domain=domain)
+
+    zk_sumcheck_polynomial, variables = create_zk_sumcheck_polynomial(
+        values, domain=domain
+    )
+    _, G2PK = PP
+    g2pk_store = G2PK[1]
+    if g2pk_store.pp_type != PPType.LINEAR:
+        raise ValueError(
+            "Invalid public parameters for zk sumcheck polynomial. Use linear to avoid exponential complexity"
+        )
+    return Commit(G2PK, zk_sumcheck_polynomial, modulo)
+
+
+def prove_zk_sumcheck_polynomial(
+    values: list[FixedPointModularInteger],
+    random_point: list[FixedPointModularInteger],
+    PP: TPP,
+    modulo: int = curve_order,
+):
+    domain = FiniteField(modulo)
+    values = convert_to_sympy_ff(values, domain=domain)
+    random_point = convert_to_sympy_ff(random_point, domain=domain)
+    new_random_point = [1] * len(random_point) * 2
+    for i in range(len(random_point)):
+        new_random_point[2 * i] = random_point[i]
+        new_random_point[2 * i + 1] = random_point[i] ** 2
+    random_point = new_random_point
+    zk_sumcheck_polynomial, variables = create_zk_sumcheck_polynomial(
+        values, domain=domain
+    )
+    G1PK, _ = PP
+    g1pk_store = G1PK[1]
+    if g1pk_store.pp_type != PPType.LINEAR:
+        raise ValueError(
+            "Invalid public parameters for zk sumcheck polynomial. Use linear to avoid exponential complexity"
+        )
+    evaluation, openings = Open(G1PK, zk_sumcheck_polynomial, variables, random_point)
+    return evaluation, openings
+
+
+def verify_zk_sumcheck_polynomial(
+    commitment: TG2P,
+    random_point: list[FixedPointModularInteger],
+    evaluation: int,
+    openings: list[Union[TG2P, Poly]],
+    PP: TPP,
+    modulo: int = curve_order,
+):
+    domain = FiniteField(modulo)
+    random_point = convert_to_sympy_ff(random_point, domain=domain)
+    random_point = [int(val) for val in random_point]
+    new_random_point = [1] * len(random_point) * 2
+    for i in range(len(random_point)):
+        new_random_point[2 * i] = random_point[i]
+        new_random_point[2 * i + 1] = random_point[i] ** 2
+    random_point = new_random_point
+    return Verify(PP, commitment, evaluation, openings, random_point, modulo)
