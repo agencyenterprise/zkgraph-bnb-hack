@@ -1,16 +1,25 @@
 import datetime
 import secrets
 import string
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Path
 from pymongo.errors import PyMongoError
 from pydantic import BaseModel
 from backend.auth.auth import authenticate
 from backend.config.database import users_collection
+from backend.schemas.user_schema import individual_serial
 
 router = APIRouter()
 
 class CreateApiTokenRequest(BaseModel):
     address: str
+
+@router.get("/{owner_wallet}")
+async def get_user(
+    owner_wallet: str = Path(..., alias="owner_wallet"),
+    _ = Depends(authenticate),
+):
+    user = users_collection.find_one({"address": owner_wallet })
+    return individual_serial(user)
 
 @router.post("/api_token")
 async def create_api_token(

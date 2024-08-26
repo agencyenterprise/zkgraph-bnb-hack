@@ -49,7 +49,6 @@ export async function getLogged() {
   }
 
   const authResult = await thirdwebAuth.verifyJWT({ jwt: jwt.value });
-  console.log({ authResult })
   if (!authResult.valid) {
     return;
   }
