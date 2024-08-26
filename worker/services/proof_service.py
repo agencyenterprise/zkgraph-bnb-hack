@@ -25,7 +25,6 @@ async def generate_proof(consumer_id: str, proof_request_id: str, ai_model_name:
 
   parsed_ai_model_inputs = json.loads(ai_model_inputs)
   inputs = np.array(parsed_ai_model_inputs)
-  inputs = np.random.randn(1, 2).astype(np.float32)
   zerok_outputs = from_onnx(onnx_model, inputs)
 
   graph_output = np.sum(zerok_outputs[0])
