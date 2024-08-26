@@ -39,7 +39,7 @@ export default function Me() {
 
   const onClickApiKey = () => async () => {
     if (!user) return
-    navigator.clipboard.writeText(user.api_token).then(() => { })
+    navigator.clipboard.writeText(user.api_token ?? "").then(() => { })
   }
 
   const onGenerateApiToken = () => async () => {
