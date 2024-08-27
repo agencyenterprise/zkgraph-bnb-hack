@@ -10,6 +10,7 @@ type ProofRequest = {
   name: string;
   description: string;
   ai_model_name: string;
+  status: string;
 };
 
 export default function Me() {
