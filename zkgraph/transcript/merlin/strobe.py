@@ -1,3 +1,6 @@
+# Code extracted from the https://github.com/NOOMA-42/pylookup/tree/main/src/plookup repository
+
+
 from typing import Type, TypeVar
 from zkgraph.transcript.merlin.keccak import KeccakF1600
 

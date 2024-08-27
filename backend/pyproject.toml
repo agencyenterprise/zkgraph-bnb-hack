@@ -16,6 +16,8 @@ pycognito = "^2024.5.1"
 web3 = "^6.20.2"
 eth-abi = "^5.1.0"
 aio-pika = "^9.4.3"
+dill = "^0.3.8"
+zkgraph = {git = "git@github.com:agencyenterprise/zkgraph-bnb-hack.git"}
 
 [build-system]
 requires = ["poetry-core"]

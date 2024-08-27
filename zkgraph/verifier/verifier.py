@@ -1,3 +1,6 @@
+# The code below is based on the C++ Libra implementation found at https://github.com/sunblaze-ucb/Libra
+
+
 from zkgraph.circuits.circuit import LayeredCircuit, GateType
 from zkgraph.polynomials.field import (
     FiniteField,
