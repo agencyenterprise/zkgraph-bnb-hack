@@ -9,37 +9,50 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-2xl py-20 sm:py-36 px-4 text-secondary-100">
       <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-        <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-secondary-400 ring-1 ring-tertiary-600 hover:ring-tertiary-400">
-          Public code and more technical info{" "}
+        <div className="relative rounded-full px-3 py-1 text-md leading-6 text-secondary-400 ring-1 ring-tertiary-600 hover:ring-tertiary-400">
+          zkGraph for Binance Smart Chain is now available on{" "}
           <Link
             href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
             className="font-semibold text-primary-500 hover:text-primary-400"
           >
             <span className="absolute inset-0" aria-hidden="true" />
-            Read more <span aria-hidden="true">&rarr;</span>
+            Github <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
       </div>
       <div className="text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-primary-500 sm:text-5xl">
-          A ZKML framework based on the Virgo++/Libra protocol
+        <h1 className="text-2xl font-bold tracking-tight sm:text-5xl">
+          A <span className="text-primary-500">distributed zkML</span> framework
         </h1>
+        <h2 className="text-xl sm:text-4xl">
+          for trustless verifiable machine learning
+        </h2>
         <p className="mt-6 text-lg leading-8 text-secondary-200">
-          This application implements on-chain verification using the linear
-          prover time zk protocol Virgo++/Libra. It is designed to generate
-          proofs for small ONNX graphs for MLP and Numpy computations.
+          zkGraph harnesses a network of distributed prover nodes to generate
+          zero-knowledge proofs for ONNX graphs, starting with MLP and NumPy
+          computations. By leveraging the Binance Smart Chain and the
+          lightning-fast{" "}
+          <Link
+            className="text-primary-500 hover:text-primary-400"
+            href="https://eprint.iacr.org/2019/317"
+          >
+            Libra
+          </Link>{" "}
+          protocol, we aim to bring unparalleled efficiency to on-chain
+          verification.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Button
+            className="text-xl text-primary-500 bg-black ring ring-tertiary-600 hover:ring-tertiary-400"
             id={`button-started`}
             type="button"
-            label="Get started"
+            label="Interactive Demo"
             onClick={() => {
               router.push("/requestProof");
             }}
           />
           <a
-            href="/requestProof"
+            href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
             className="text-sm font-semibold leading-6 text-secondary-100 hover:text-secondary-400"
           >
             Learn more <span aria-hidden="true">→</span>
