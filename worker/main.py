@@ -10,6 +10,7 @@ from services.queue_service import PikaClient
 load_dotenv()
 app = FastAPI()
 pika_client = PikaClient(os.environ.get('RABBITMQ_URL'))
+print(os.environ.get('RABBITMQ_URL'))
 
 worker_wallet = os.getenv("WORKER_WALLET")
 
