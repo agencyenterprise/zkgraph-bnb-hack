@@ -1,5 +1,5 @@
 import json
-from services.verify_service import verify_proof
+from backend.services.verify_service import verify_proof
 
 async def handle_proof_message(body, consumer_id):
     payload = json.loads(body)
