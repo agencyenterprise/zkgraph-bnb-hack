@@ -5,6 +5,7 @@ import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 type ProofRequest = {
   name: string;
