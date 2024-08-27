@@ -23,4 +23,4 @@ async def create_proof_request_endpoint(
     ai_model_inputs: str = Body(),
     _ = Depends(authenticate),
 ):
-    create_proof_request(owner_wallet, name, description, ai_model_name, ai_model_inputs)
+    return await create_proof_request(owner_wallet, name, description, ai_model_name, ai_model_inputs)
