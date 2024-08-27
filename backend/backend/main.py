@@ -7,6 +7,7 @@ from backend.routes.users import router as UserRequestRouter
 load_dotenv()
 app = FastAPI()
 
-app.include_router(ProofRequestRouter, prefix="/proof_requests")
+app.include_router(ProofRequestRouter, prefix="/proof_requests", include_in_schema=False)
+app.include_router(UserRequestRouter, prefix="/user", include_in_schema=False)
+
 app.include_router(ProofRequestApiRouter, prefix="/api/proof_requests")
-app.include_router(UserRequestRouter, prefix="/user")
