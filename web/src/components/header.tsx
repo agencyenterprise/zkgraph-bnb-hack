@@ -13,6 +13,7 @@ const navigation = [
   { name: "Proof History", href: "/requests" },
   { name: "Buy credits", href: "/buy" },
   { name: "Earn Money", href: "/worker" },
+  { name: "Profile", href: "/profile" },
   {
     name: "Github",
     href: "https://github.com/agencyenterprise/zkgraph-bnb-hack",

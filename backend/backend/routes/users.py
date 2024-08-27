@@ -1,40 +1,48 @@
 import datetime
 import secrets
 import string
-from fastapi import APIRouter, Body, HTTPException, status, Depends
-from backend.auth.auth import authenticate
-from backend.config.database import users_collection
-from backend.schemas.proof_request_schema import list_serial, individual_serial
+from fastapi import APIRouter, HTTPException, status, Depends, Path
 from pymongo.errors import PyMongoError
 from pydantic import BaseModel
+from backend.auth.auth import authenticate
+from backend.config.database import users_collection
+from backend.schemas.user_schema import individual_serial
 
 router = APIRouter()
 
-class WalletRequest(BaseModel):
-    wallet: str
+class CreateApiTokenRequest(BaseModel):
+    address: str
+
+@router.get("/{owner_wallet}")
+async def get_user(
+    owner_wallet: str = Path(..., alias="owner_wallet"),
+    _ = Depends(authenticate),
+):
+    user = users_collection.find_one({"address": owner_wallet })
+    return individual_serial(user)
 
 @router.post("/api_token")
 async def create_api_token(
-    request: WalletRequest,
+    request: CreateApiTokenRequest,
     _ = Depends(authenticate),
 ):
     try:
         api_token = generate_unique_api_token()
 
-        existing_token = users_collection.find_one({"wallet": request.wallet})
+        existing_token = users_collection.find_one({"address": request.address})
 
         if existing_token:
             users_collection.update_one(
-                {"wallet": request.wallet},
+                {"address": request.address},
                 {"$set": {
-                    "token": api_token,
+                    "api_token": api_token,
                     "updated_at": datetime.datetime.utcnow()
                 }}
             )
         else:
             token_document = {
-                "wallet": request.wallet,
-                "token": api_token,
+                "address": request.address,
+                "api_token": api_token,
                 "created_at": datetime.datetime.utcnow(),
             }
             
@@ -59,6 +67,6 @@ def generate_api_token(length=32):
 
 def generate_unique_api_token(length=32):
     while True:
-        token = generate_api_token(length)
-        if not users_collection.find_one({"token": token}):
-            return token
+        api_token = generate_api_token(length)
+        if not users_collection.find_one({"api_token": api_token}):
+            return api_token
