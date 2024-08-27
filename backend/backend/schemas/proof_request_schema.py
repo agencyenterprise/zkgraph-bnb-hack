@@ -5,6 +5,7 @@ def individual_serial(proof_request) -> dict:
         "description": str(proof_request["description"]),
         "ai_model_name": str(proof_request["ai_model_name"]),
         "ai_model_inputs": str(proof_request["ai_model_inputs"]),
+        "status": str(proof_request["status"]),
     }
 
 def list_serial(proof_requests) -> list:
