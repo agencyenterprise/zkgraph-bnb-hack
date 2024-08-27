@@ -1,6 +1,5 @@
 # The code below is based on the Libra C++ implementation found at https://github.com/sunblaze-ucb/Libra
-
-
+# Implemented during the BnB Q3 Hackathon 2024
 from zkgraph.circuits.circuit import (
     LayeredCircuit,
     GateType,
@@ -11,7 +10,7 @@ from zkgraph.polynomials.field import (
     ModularInteger,
     PRIME_MODULO as curve_order,
 )
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 from zkgraph.polynomials.poly import (
     LinearPoly,
     QuadraticPoly,
@@ -20,6 +19,16 @@ from zkgraph.polynomials.poly import (
 from zkgraph.utils.utils import my_resize, my_resize_pol
 from zkgraph.transcript.transcript import CommonTranscript
 from zkgraph.types.proof import ZeroKProofTranscript
+from zkgraph.commitments.mkzg.mkzg import (
+    commit_random_polynomial_R,
+    KeyGen,
+    prove_random_polynomial_R,
+    verify_random_polynomial_R,
+    commit_zk_sumcheck_polynomial,
+    prove_zk_sumcheck_polynomial,
+    verify_zk_sumcheck_polynomial,
+    load_pp,
+)
 
 DOMAIN = FiniteField(curve_order)
 
@@ -31,7 +40,13 @@ def interpolate(
 
 
 class ZkProver:
-    def __init__(self, circuit: LayeredCircuit, domain: FiniteField = DOMAIN):
+    def __init__(
+        self,
+        circuit: LayeredCircuit,
+        domain: FiniteField = DOMAIN,
+        mkzg: bool = False,
+        public_parameters: Dict[str, str] = {"r_pp": None, "zk_pp": None},
+    ):
         self.domain: FiniteField = domain
         self.C: LayeredCircuit = circuit
         self.zero = domain(0, True)
@@ -101,6 +116,28 @@ class ZkProver:
         self.input_mpz: List[int] = []
         self.maskr_mpz: List[int] = []
         self.maskr: List[ModularInteger] = []
+        self.mkzg = mkzg
+        self.random_polynomial_r_pp = None
+        self.zk_sumcheck_pp = None
+        if self.mkzg:
+            start = time.time()
+            if public_parameters["r_pp"] is not None:
+                self.random_polynomial_r_pp = load_pp(public_parameters["r_pp"])
+            else:
+                self.random_polynomial_r_pp = KeyGen(2, 2, curve_order)
+                print(f"Keys generated for maskR in {time.time() - start} seconds")
+            if public_parameters["zk_pp"] is not None:
+                self.zk_sumcheck_pp = load_pp(public_parameters["zk_pp"])
+            else:
+
+                zkpp_size = max([i.bitLength for i in self.C.circuit]) * 2 + 1
+                zkpp_size = zkpp_size * 2 + 6
+                zkpp_size = zkpp_size + 2
+                print(f"Generating keys for zk_sumcheck_pp with size {zkpp_size}")
+                self.zk_sumcheck_pp = KeyGen(
+                    zkpp_size, 2, curve_order, generate_zk_sumcheck_pp=True
+                )
+                print(f"Keys generated in {time.time() - start} seconds")
 
     def V_res(
         self,
@@ -869,7 +906,11 @@ class ZkProver:
             maskR_gmp.append(self.maskR[i])
         self.prepreu1 = self.preu1
         self.preprev1 = self.prev1
-
+        if self.mkzg:
+            if len(self.C.circuit) - 1 != layer_id:
+                self.r_f_R = commit_random_polynomial_R(
+                    maskR_gmp, self.random_polynomial_r_pp, modulo=curve_order
+                )
         for i in range(6):
             self.preR[i] = self.maskR[i]
         self.Rg1.a = self.maskR[4]
@@ -912,13 +953,20 @@ class ZkProver:
             self.sumRc.c = self.maskR[0]
 
     def generate_maskpoly_pre_rho(self, length: int, degree: int):
-        self.maskpoly = [self.zero] * (length * degree + 1 + 6)
-        for i in range(length * degree + 1 + 6):
+        maskpoly_size = length * degree + 1 + 6
+        self.maskpoly = [self.zero] * (maskpoly_size)
+        for i in range(maskpoly_size):
             self.maskpoly[i] = self.random()
 
-        self.maskpoly_gmp = [0] * (length * degree + 1 + 6)
+        self.maskpoly_gmp = [0] * (maskpoly_size)
         for i in range(length * degree + 7):
             self.maskpoly_gmp[i] = int(self.maskpoly[i]) % self.domain.characteristic()
+        if self.mkzg:
+            self.r_f_mask_poly = commit_zk_sumcheck_polynomial(
+                self.maskpoly_gmp,
+                self.zk_sumcheck_pp,
+                modulo=curve_order,
+            )
 
     def generate_maskpoly_after_rho(self, length: int, degree: int):
         for i in range(length * degree + 1 + 6):
@@ -1219,6 +1267,7 @@ class ZkProver:
         a_0 = alpha * a_0
         alpha_beta_sum = a_0
         direct_relay_value = self.domain.zero
+
         for i in list(reversed(range(1, self.C.total_depth))):
             current_bit_len = self.C.circuit[i].bitLength
             previous_bit_len = self.C.circuit[i - 1].bitLength
@@ -1252,6 +1301,62 @@ class ZkProver:
             ) + beta * self.direct_relay(i, self.r_1, self.r_u)
             self.transcript.append_sympy_ff(b"direct_relay_value", direct_relay_value)
             r_c = self.generate_randomness(size=1, label="r_c")
+            if self.mkzg:
+                if len(self.C.circuit) - 1 != i:
+                    random_point = [self.prepreu1, r_c[0]]
+                    evaluation, openings = prove_random_polynomial_R(
+                        self.preR,
+                        random_point,
+                        self.random_polynomial_r_pp,
+                        curve_order,
+                    )
+
+                    self.transcript.append_curve_point(
+                        b"random_r_commitment", self.r_f_R
+                    )
+                    self.transcript.append_curve_point(b"random_r_openings", openings)
+                    self.transcript.append_sympy_ff(b"random_r_evaluation", evaluation)
+                    assert verify_random_polynomial_R(
+                        self.r_f_R,
+                        random_point,
+                        evaluation,
+                        openings,
+                        self.random_polynomial_r_pp,
+                        curve_order,
+                    )
+                    random_point = [*self.r_u, *self.r_v, r_c[0]]
+                    half_maskpoly = len(self.maskpoly) // 2
+                    if half_maskpoly >= len(random_point):
+                        random_point_size_to_fill = abs(
+                            half_maskpoly - len(random_point)
+                        )
+                        random_point.extend(
+                            self.generate_randomness(
+                                size=random_point_size_to_fill, label="r_c"
+                            )
+                        )
+                    else:
+                        random_point = random_point[:half_maskpoly]
+
+                    evaluation, openings = prove_zk_sumcheck_polynomial(
+                        self.maskpoly_gmp,
+                        random_point,
+                        self.zk_sumcheck_pp,
+                        curve_order,
+                    )
+                    self.transcript.append_curve_point(
+                        b"maskpoly_commitment", self.r_f_mask_poly
+                    )
+                    self.transcript.append_curve_point(b"maskpoly_openings", openings)
+                    self.transcript.append_sympy_ff(b"maskpoly_evaluation", evaluation)
+                    assert verify_zk_sumcheck_polynomial(
+                        self.r_f_mask_poly,
+                        random_point,
+                        evaluation,
+                        openings,
+                        self.zk_sumcheck_pp,
+                        curve_order,
+                    )
             self.one_minus_r_u = [self.domain.zero] * previous_bit_len
             self.one_minus_r_v = [self.domain.zero] * previous_bit_len
             for j in range(previous_bit_len):

@@ -1,5 +1,5 @@
 [flake8]
-max-line-length = 190
+max-line-length = 310
 extend-ignore = E203, E704, E731
 per-file-ignores =
     zkgraph/commitments/mkzg/ecc/__init__.py:F401,zkgraph/circuits/circuit.py:E741
