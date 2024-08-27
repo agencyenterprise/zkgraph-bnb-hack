@@ -84,9 +84,13 @@ export default function Me() {
                   </p>
                   {proofRequest.worker_wallet != "None" && <p className="text-left text-sm text-secondary-200">
                     Paid to worker:
-                    <a href={`https://testnet.bscscan.com/address/${proofRequest.worker_wallet}`} target='_blank'>{' '}
-                      ${proofRequest.worker_wallet.slice(0, 6)}...{proofRequest.worker_wallet.slice(-4)}
-                    </a>
+                    <Link
+                      href={`https://testnet.bscscan.com/address/${proofRequest.worker_wallet}`}
+                      target="_blank"
+                      className="underline text-primary-500 hover:text-primary-400"
+                    >
+                      {proofRequest.worker_wallet.slice(0, 6)}...{proofRequest.worker_wallet.slice(-4)}
+                    </Link>
                   </p>}
                 </div>
               ))}
