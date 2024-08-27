@@ -77,6 +77,9 @@ export default function Me() {
                   <p className="text-left text-sm text-secondary-200">
                     {`Model name: ${proofRequest.ai_model_name}`}
                   </p>
+                  <p className="text-left text-sm text-secondary-200">
+                    {`Status: ${proofRequest.status}`}
+                  </p>
                 </div>
               ))}
             </div>
