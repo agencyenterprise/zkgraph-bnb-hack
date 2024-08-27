@@ -4,8 +4,8 @@ from fastapi import FastAPI
 import os
 import uuid
 
-from messages.proof import handle_proof_message
-from services.queue_service import PikaClient
+from backend.messages.proof import handle_proof_message
+from backend.services.queue_service import PikaClient
 
 from backend.routes.proof_requests import router as ProofRequestRouter
 from backend.routes.users import router as UserRequestRouter
