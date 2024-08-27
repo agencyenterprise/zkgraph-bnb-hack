@@ -47,7 +47,7 @@ export default function Me() {
   }, []);
 
   return (
-    <div className="bg-tertiary-900 py-12 sm:py-24 h-screen">
+    <div className="bg-tertiary-900 py-12 sm:py-24 min-h-screen">
       <div className="mx-auto w-full sm:max-w-2xl px-4 sm:px-8">
         <div className="mx-auto max-w-4xl text-center py-8">
           <h2 className="text-2xl font-bold tracking-tight text-secondary-100 sm:text-4xl">
