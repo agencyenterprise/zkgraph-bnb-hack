@@ -19,8 +19,7 @@ export async function POST(req: Request) {
       owner_wallet: ownerWallet,
       name: data.name,
       description: data.description,
-      // graph_url: "",
-      ai_model_name: "Iris",
+      ai_model_name: "iris_model",
       ai_model_inputs: data.jsonInput,
     })
   })

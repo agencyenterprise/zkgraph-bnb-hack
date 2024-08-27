@@ -1,6 +1,5 @@
 import math
 from uuid import uuid4
-import math
 
 
 from zkgraph.polynomials.field import (

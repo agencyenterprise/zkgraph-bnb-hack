@@ -9,6 +9,11 @@ from zkgraph.ops.onnx_utils import generate_small_iris_onnx_model
 from zkgraph.ops.from_onnx import from_onnx
 from zkgraph.prover.prover import ZkProver
 from zkgraph.verifier.verifier import ZkVerifier
+import subprocess
+
+
+use_mkzg = int(os.environ.get("USE_PCS", 0))
+use_noir = int(os.environ.get("USE_NOIR", 0))
 
 
 def add_intermediate_layers_as_outputs(onnx_model):
@@ -59,20 +64,35 @@ def main():
     )
 
     start = time.time()
-    layered_circuit, _, layers = Value.compile_layered_circuit(graph_output, True)
-    print(f"Time to compile: {time.time() - start}")
-    for i in range(100):
-        print(f"Run {i}")
-        start = time.time()
-        prover = ZkProver(layered_circuit)
-        assert prover.prove()
-        print(f"Time to prove: {time.time() - start}")
-        proof_transcript = prover.proof_transcript.to_bytes()
-        print(f"Time to prove: {time.time() - start}")
-        # start = time.time()
-        verifier = ZkVerifier(layered_circuit)
-        verifier.run_verifier(proof_transcript=proof_transcript)
-        print(f"Time to verify: {time.time() - start}")
+    layered_circuit, _ = Value.compile_layered_circuit(graph_output)
+    start = time.time()
+    if use_mkzg:
+        public_parameters = {
+            "r_pp": "./tests/assets/random_polynomial_r_powers_of_tau.ptau",
+            "zk_pp": "./tests/assets/zk_sumcheck_powers_of_tau.ptau",
+        }
+        prover = ZkProver(
+            layered_circuit, mkzg=use_mkzg, public_parameters=public_parameters
+        )
+        verifier = ZkVerifier(
+            layered_circuit, mkzg=True, public_parameters=public_parameters
+        )
+    else:
+        prover = ZkProver(layered_circuit, mkzg=False)
+        verifier = ZkVerifier(layered_circuit, mkzg=False)
+    assert prover.prove()
+    print(f"Time to prove: {time.time() - start}")
+    proof_transcript = prover.proof_transcript.to_bytes()
+    print(f"Time to prove: {time.time() - start}")
+    start = time.time()
+    verifier.run_verifier(proof_transcript=proof_transcript)
+    print(f"Time to verify: {time.time() - start}")
+    if use_noir:
+        verifier.get_noir_transcript()
+        subprocess.call(
+            "cd onchain_verifier/ && nargo execute iris && bb prove -b ./target/onchain_verifier.json -w ./target/iris.gz -o ./target/proof && bb write_vk -b target/onchain_verifier.json -o ./target/vk && bb verify -k ./target/vk -p ./target/proof && bb contract",
+            shell=True,
+        )
 
 
 if __name__ == "__main__":

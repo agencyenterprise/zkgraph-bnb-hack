@@ -10,6 +10,12 @@ from services.queue_service import PikaClient
 load_dotenv()
 app = FastAPI()
 pika_client = PikaClient(os.environ.get('RABBITMQ_URL'))
+print("Connecting to RabbitMQ: ", os.environ.get('RABBITMQ_URL'))
+
+worker_wallet = os.getenv("WORKER_WALLET")
+
+if not worker_wallet:
+  raise Exception('WORKER_WALLET environment variable is required')
 
 @app.get("/") 
 async def main_route():

@@ -5,11 +5,14 @@ import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 type ProofRequest = {
   name: string;
   description: string;
   ai_model_name: string;
+  status: string;
+  worker_wallet: string;
 };
 
 export default function Me() {
@@ -45,7 +48,7 @@ export default function Me() {
   }, []);
 
   return (
-    <div className="bg-tertiary-900 py-12 sm:py-24 h-screen">
+    <div className="bg-tertiary-900 py-12 sm:py-24 min-h-screen">
       <div className="mx-auto w-full sm:max-w-2xl px-4 sm:px-8">
         <div className="mx-auto max-w-4xl text-center py-8">
           <h2 className="text-2xl font-bold tracking-tight text-secondary-100 sm:text-4xl">
@@ -77,6 +80,19 @@ export default function Me() {
                   <p className="text-left text-sm text-secondary-200">
                     {`Model name: ${proofRequest.ai_model_name}`}
                   </p>
+                  <p className="text-left text-sm text-secondary-200">
+                    {`Status: ${proofRequest.status}`}
+                  </p>
+                  {proofRequest.worker_wallet != "None" && <p className="text-left text-sm text-secondary-200">
+                    Paid to worker:{' '}
+                    <Link
+                      href={`https://testnet.bscscan.com/address/${proofRequest.worker_wallet}`}
+                      target="_blank"
+                      className="underline text-primary-500 hover:text-primary-400"
+                    >
+                      {proofRequest.worker_wallet.slice(0, 6)}...{proofRequest.worker_wallet.slice(-4)}
+                    </Link>
+                  </p>}
                 </div>
               ))}
             </div>

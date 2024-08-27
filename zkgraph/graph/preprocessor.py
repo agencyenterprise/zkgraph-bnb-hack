@@ -1,7 +1,6 @@
 import math
 from typing import List, Dict, Union, Type
 from collections import defaultdict
-import math
 from zkgraph.circuits.circuit import LayeredCircuit, Gate, GateType, Layer
 from zkgraph.graph.base import BaseValue
 import time

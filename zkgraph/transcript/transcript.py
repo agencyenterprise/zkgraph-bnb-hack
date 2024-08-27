@@ -30,17 +30,32 @@ class CommonTranscript(MerlinTranscript):
         self.append_message(label, item)
 
     def append_scalar(self, label: bytes, item: Scalar):
-        value = item.n.to_bytes(32, "big")
+        value = item.n.to_bytes(64, "big")
         if self.has_label(label):
             self.proof_transcript.proof[label].append(dill.dumps(item.n))
         self.append_message(label, value)
 
+    def append_int(self, label: bytes, item: int):
+        value = item.to_bytes(64, "big")
+        if self.has_label(label):
+            self.proof_transcript.proof[label].append(dill.dumps(item))
+        self.append_message(label, value)
+
     def append_sympy_ff(self, label: bytes, item: ModularInteger):
-        value = item.val
+        if not isinstance(item, int):
+            value = item.val
+        else:
+            value = item
         if self.has_label(label):
             self.proof_transcript.proof[label].append(dill.dumps(value))
-        value = value.to_bytes(32, "big")
+        value = value.to_bytes(64, "big")
         self.append_message(label, value)
+
+    def append_curve_point(self, label: bytes, item):
+        values = item
+        if self.has_label(label):
+            self.proof_transcript.proof[label].append(dill.dumps(values))
+        self.append_message(label, dill.dumps(values))
 
     def append_scalar_list(self, label: bytes, items: list[Scalar]):
         for item in items:
@@ -51,7 +66,7 @@ class CommonTranscript(MerlinTranscript):
         if self.has_label(label):
             self.proof_transcript.proof[label].append(dill.dumps(values))
         for value in values:
-            value = value.to_bytes(32, "big")
+            value = value.to_bytes(64, "big")
             self.append_message(label, value)
 
     def append_point(self, label: bytes, item: G1Point):
@@ -59,8 +74,8 @@ class CommonTranscript(MerlinTranscript):
             self.proof_transcript.proof[label].append(
                 dill.dumps([item[0].n, item[1].n])
             )
-        self.append_message(label, item[0].n.to_bytes(32, "big"))
-        self.append_message(label, item[1].n.to_bytes(32, "big"))
+        self.append_message(label, item[0].n.to_bytes(64, "big"))
+        self.append_message(label, item[1].n.to_bytes(64, "big"))
 
     def get_and_append_challenge(self, label: bytes) -> Scalar:
         while True:

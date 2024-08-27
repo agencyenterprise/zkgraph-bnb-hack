@@ -1,10 +1,9 @@
 from typing import Union
 import math
 import random
+from zkgraph.commitments.mkzg.ecc import curve_order
 
-PRIME_MODULO = (
-    2**255 - 19
-)  # 21888242871839275222246405745257275088548364400416034343698204186575808495617  # 2**255 - 19
+PRIME_MODULO = curve_order  # 2**255 - 19
 PRECISION_BITS = 64
 SCALE = 2**PRECISION_BITS
 NEGATIVE_POINT = PRIME_MODULO // 2
