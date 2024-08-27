@@ -11,6 +11,7 @@ type ProofRequest = {
   description: string;
   ai_model_name: string;
   status: string;
+  worker_wallet: string;
 };
 
 export default function Me() {
@@ -80,6 +81,9 @@ export default function Me() {
                   </p>
                   <p className="text-left text-sm text-secondary-200">
                     {`Status: ${proofRequest.status}`}
+                  </p>
+                  <p className="text-left text-sm text-secondary-200">
+                    {`Paid to worker: ${proofRequest.worker_wallet.slice(4, 10)}...${proofRequest.worker_wallet.slice(-4)}`}
                   </p>
                 </div>
               ))}
