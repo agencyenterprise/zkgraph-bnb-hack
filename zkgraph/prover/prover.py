@@ -1,5 +1,5 @@
 # The code below is based on the Libra C++ implementation found at https://github.com/sunblaze-ucb/Libra
-
+# Implemented during the BnB Q3 Hackathon 2024
 from zkgraph.circuits.circuit import (
     LayeredCircuit,
     GateType,

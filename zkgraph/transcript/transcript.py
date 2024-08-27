@@ -35,6 +35,12 @@ class CommonTranscript(MerlinTranscript):
             self.proof_transcript.proof[label].append(dill.dumps(item.n))
         self.append_message(label, value)
 
+    def append_int(self, label: bytes, item: int):
+        value = item.to_bytes(64, "big")
+        if self.has_label(label):
+            self.proof_transcript.proof[label].append(dill.dumps(item))
+        self.append_message(label, value)
+
     def append_sympy_ff(self, label: bytes, item: ModularInteger):
         if not isinstance(item, int):
             value = item.val
@@ -49,14 +55,6 @@ class CommonTranscript(MerlinTranscript):
         values = item
         if self.has_label(label):
             self.proof_transcript.proof[label].append(dill.dumps(values))
-        # value = value.to_bytes(64, "big")
-        # byte_list = b""
-        # for value in values:
-        #     if isinstance(item, FQ):
-        #         byte_list = value.n.to_bytes(64, "big")
-        #     elif isinstance(item, FQ2):
-        #         byte_list = value.n.to_bytes(64, "big")
-
         self.append_message(label, dill.dumps(values))
 
     def append_scalar_list(self, label: bytes, items: list[Scalar]):

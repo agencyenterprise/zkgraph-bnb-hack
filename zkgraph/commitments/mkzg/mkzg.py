@@ -452,6 +452,7 @@ def Verify(
     openings: list[Union[TG2P, Poly]],
     random_point: list[int],
     modulo: int = curve_order,
+    return_tuple: bool = False,
 ) -> bool:
     """Verify the polynomial commitment agains the multilinear kgzg scheme
 
@@ -501,6 +502,8 @@ def Verify(
     right_hand_side = right_hand_side * pairing_result
     left_hand_pairing = pairing(left_hand_side, G1)
     # Compare the left and right hand sides
+    if return_tuple:
+        return left_hand_pairing, right_hand_side
     return left_hand_pairing == right_hand_side
 
 
@@ -530,7 +533,7 @@ def convert_to_sympy_ff(
 def create_random_polynomial_R(
     values: list[ModularInteger], domain: FiniteField
 ) -> Poly:
-    # R(x,y) = a0 + a1*x0 + a2*x1 + a3*x0*x1 + a4*x0^2 + a5*x1^2
+    # R(x0,x1) = a0 + a1*x0 + a2*x1 + a3*x0*x1 + a4*x0^2 + a5*x1^2
     x0, x1 = symbols("x0 x1")
     a0, a1, a2, a3, a4, a5 = values
     return Poly(
@@ -572,17 +575,20 @@ def verify_random_polynomial_R(
     openings: list[Union[TG2P, Poly]],
     PP: TPP,
     modulo: int = curve_order,
+    return_tuple: bool = False,
 ):
     domain = FiniteField(modulo)
     random_point = convert_to_sympy_ff(random_point, domain=domain)
     random_point = [int(val) for val in random_point]
-    return Verify(PP, commitment, evaluation, openings, random_point, modulo)
+    return Verify(
+        PP, commitment, evaluation, openings, random_point, modulo, return_tuple
+    )
 
 
 def create_zk_sumcheck_polynomial(
     values: list[FixedPointModularInteger], domain: FiniteField
 ) -> Poly:
-    # R(x,y,...length) = a0 + a1*x0 + a2*x0**2 + a3*x1 + a4*x1**2 + ... + a_n*xn**2
+    # R(x0,x1,...xn) = a0 + a1*x0 + a2*x0**2 + a3*x1 + a4*x1**2 + ... + a_n*xn**2; n = len(values) - 1
     variables = symbols(" ".join([f"x{i}" for i in range(len(values) - 1)]))
     return (
         Poly(
@@ -649,6 +655,7 @@ def verify_zk_sumcheck_polynomial(
     openings: list[Union[TG2P, Poly]],
     PP: TPP,
     modulo: int = curve_order,
+    return_tuple: bool = False,
 ):
     domain = FiniteField(modulo)
     random_point = convert_to_sympy_ff(random_point, domain=domain)
@@ -658,4 +665,6 @@ def verify_zk_sumcheck_polynomial(
         new_random_point[2 * i] = random_point[i]
         new_random_point[2 * i + 1] = random_point[i] ** 2
     random_point = new_random_point
-    return Verify(PP, commitment, evaluation, openings, random_point, modulo)
+    return Verify(
+        PP, commitment, evaluation, openings, random_point, modulo, return_tuple
+    )

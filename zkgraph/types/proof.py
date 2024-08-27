@@ -62,6 +62,7 @@ class ZeroKProofTranscript(Proof):
             b"maskpoly_commitment",
             b"maskpoly_openings",
             b"maskpoly_evaluation",
+            b"maskpoly_size",
         ]
         super().__init__(keys)
         self.label_counter = {key: 0 for key in keys}
@@ -94,7 +95,16 @@ class ZeroKProofTranscript(Proof):
             raise ValueError(
                 f"Invalid number of coefficients for label {label}, must be 3 or 6"
             )
-
+        if (
+            label == b"random_r_openings"
+            or label == b"maskpoly_openings"
+            or label == b"random_r_commitment"
+            or label == b"maskpoly_commitment"
+            or label == b"random_r_evaluation"
+            or label == b"maskpoly_evaluation"
+            or label == b"maskpoly_size"
+        ):
+            return dill.loads(value)
         return domain(dill.loads(value), False)
 
     def flatten(self):
