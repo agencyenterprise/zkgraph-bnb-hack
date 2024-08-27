@@ -36,7 +36,7 @@ async def create_proof_request(
             "gasLimit": 1000000,
         })
 
-        receipt = wait_for_confirmations(tx["hash"])
+        receipt = wait_for_confirmations(tx["hash"], 2, 5)
         
         if receipt["status"] == 0:
             raise Exception(f"Transaction failed: {tx['hash']}")
