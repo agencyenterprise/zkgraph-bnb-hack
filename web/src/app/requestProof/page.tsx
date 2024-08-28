@@ -45,6 +45,15 @@ export default function BuyPage() {
   const [amount, setAmount] = useState<string>();
 
   useEffect(() => {
+    if (currentStep === 3) {
+      setFormData({
+        name: `proof-request-${Date.now()}`,
+        description: "Proof request description"
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     if (escrowBalance != undefined) {
       try {
         setAmount(ethers.formatEther(escrowBalance));
