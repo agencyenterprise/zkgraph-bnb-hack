@@ -139,7 +139,7 @@ export default function BuyPage() {
                 </p>
                 <p className="mt-6 flex items-baseline gap-x-1">
                   {tier?.price ? (
-                    <span className="text-4xl font-bold tracking-tight text-primary-500">
+                    <span className="text-4xl font-bold tracking-tight">
                       $ {tier?.price}
                     </span>
                   ) : (
@@ -162,7 +162,7 @@ export default function BuyPage() {
                   id={`button-${tier.id}`}
                   type="button"
                   label="Buy credits"
-                  className="w-full mt-4"
+                  className="w-full mt-4 text-xl"
                   onClick={() => {
                     handleBuy({ ...tier, price: tier?.price || customPrice });
                   }}

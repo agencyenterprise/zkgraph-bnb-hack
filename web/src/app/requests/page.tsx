@@ -21,7 +21,8 @@ export default function Me() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [proofRequests, setProofRequests] = useState<ProofRequest[]>([]);
-  const [selectedProofRequest, setSelectedProofRequest] = useState<ProofRequest>();
+  const [selectedProofRequest, setSelectedProofRequest] =
+    useState<ProofRequest>();
   const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function Me() {
         />
       </div>
     );
-  }
+  };
 
   const ProofRequestsList = () => {
     return (
@@ -93,21 +94,24 @@ export default function Me() {
             <p className="text-left text-sm text-secondary-200">
               {`Status: ${proofRequest.status}`}
             </p>
-            {proofRequest.worker_wallet != "None" && <p className="text-left text-sm text-secondary-200">
-              Paid to worker:{' '}
-              <Link
-                href={`https://testnet.bscscan.com/address/${proofRequest.worker_wallet}`}
-                target="_blank"
-                className="underline text-primary-500 hover:text-primary-400"
-              >
-                {proofRequest.worker_wallet.slice(0, 6)}...{proofRequest.worker_wallet.slice(-4)}
-              </Link>
-            </p>}
+            {proofRequest.worker_wallet != "None" && (
+              <p className="text-left text-sm text-secondary-200">
+                Paid to worker:{" "}
+                <Link
+                  href={`https://testnet.bscscan.com/address/${proofRequest.worker_wallet}`}
+                  target="_blank"
+                  className="underline text-primary-500 hover:text-primary-400"
+                >
+                  {proofRequest.worker_wallet.slice(0, 6)}...
+                  {proofRequest.worker_wallet.slice(-4)}
+                </Link>
+              </p>
+            )}
           </div>
         ))}
       </div>
     );
-  }
+  };
 
   const ProofRequestDetails = () => {
     if (!selectedProofRequest) {
@@ -129,44 +133,47 @@ export default function Me() {
           <p className="text-left text-sm text-secondary-200">
             {`Status: ${selectedProofRequest.status}`}
           </p>
-          {selectedProofRequest.worker_wallet != "None" && <p className="text-left text-sm text-secondary-200">
-            Paid to worker:{' '}
-            <Link
-              href={`https://testnet.bscscan.com/address/${selectedProofRequest.worker_wallet}`}
-              target="_blank"
-              className="underline text-primary-500 hover:text-primary-400"
-            >
-              {selectedProofRequest.worker_wallet}
-            </Link>
-          </p>}
-          {selectedProofRequest.proof != "None" && <p className="break-all text-left text-sm text-secondary-200">
-            Proof: {' '}
-            {showMore &&
-              <>
-                <div>{selectedProofRequest.proof}</div>
-                <Button
-                  id={`button-show-less`}
-                  type="button"
-                  label="Show less"
-                  className="mt-2 px-2.5 py-1.5 font-normal outline-black"
-                  onClick={() => setShowMore(false)}
-                />
-              </>
-            }
-
-            {!showMore &&
-              <>
-                <div>{selectedProofRequest.proof.slice(0, 500)}...</div>
-                <Button
-                  id={`button-show-more`}
-                  type="button"
-                  label="Show more"
-                  className="mt-2 px-2.5 py-1.5 font-normal outline-black"
-                  onClick={() => setShowMore(true)}
-                />
-              </>
-            }
-          </p>}
+          {selectedProofRequest.worker_wallet != "None" && (
+            <p className="text-left text-sm text-secondary-200">
+              Paid to worker:{" "}
+              <Link
+                href={`https://testnet.bscscan.com/address/${selectedProofRequest.worker_wallet}`}
+                target="_blank"
+                className="underline text-primary-500 hover:text-primary-400"
+              >
+                {selectedProofRequest.worker_wallet}
+              </Link>
+            </p>
+          )}
+          {selectedProofRequest.proof != "None" && (
+            <p className="break-all text-left text-sm text-secondary-200">
+              Proof:{" "}
+              {showMore && (
+                <>
+                  <div>{selectedProofRequest.proof}</div>
+                  <Button
+                    id={`button-show-less`}
+                    type="button"
+                    label="Show less"
+                    className="mt-2 px-2.5 py-1.5 font-normal outline-black"
+                    onClick={() => setShowMore(false)}
+                  />
+                </>
+              )}
+              {!showMore && (
+                <>
+                  <div>{selectedProofRequest.proof.slice(0, 500)}...</div>
+                  <Button
+                    id={`button-show-more`}
+                    type="button"
+                    label="Show more"
+                    className="mt-2 px-2.5 py-1.5 font-normal outline-black"
+                    onClick={() => setShowMore(true)}
+                  />
+                </>
+              )}
+            </p>
+          )}
         </div>
 
         <div className="flex justify-center mt-8">
@@ -180,32 +187,34 @@ export default function Me() {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <div className="bg-tertiary-900 py-12 sm:py-24 min-h-screen">
       <div className="mx-auto w-full sm:max-w-2xl px-4 sm:px-8">
         <div className="mx-auto max-w-4xl text-center py-8">
           <h2 className="text-2xl font-bold tracking-tight text-secondary-100 sm:text-4xl">
-            All my proof requests
+            Proof Request History
           </h2>
         </div>
-        <p className="mx-auto max-w-2xl text-center text-xl font-bold leading-8 text-primary-500 py-0 sm:py-4 mt-2">
-          Visualize here all your proof requests and their status.
-        </p>
-
         <div className="flex justify-center mt-8">
           {loading && (
             <div className="mb-6 flex justify-center">
               <Loading size="500px" />
             </div>
           )}
-          
-          {!loading && <>
-            {selectedProofRequest && <ProofRequestDetails />}
-            {!selectedProofRequest && proofRequests?.length > 0 && <ProofRequestsList />}
-            {!selectedProofRequest && proofRequests?.length == 0 && <NoProofRequests />}
-          </>}
+
+          {!loading && (
+            <>
+              {selectedProofRequest && <ProofRequestDetails />}
+              {!selectedProofRequest && proofRequests?.length > 0 && (
+                <ProofRequestsList />
+              )}
+              {!selectedProofRequest && proofRequests?.length == 0 && (
+                <NoProofRequests />
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
