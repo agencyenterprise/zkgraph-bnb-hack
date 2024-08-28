@@ -8,9 +8,10 @@ from messages.request import handle_request_message
 from services.queue_service import PikaClient
 
 load_dotenv()
+
 app = FastAPI()
+
 pika_client = PikaClient(os.environ.get('RABBITMQ_URL'))
-print("Connecting to RabbitMQ: ", os.environ.get('RABBITMQ_URL'))
 
 worker_wallet = os.getenv("WORKER_WALLET")
 
@@ -23,6 +24,9 @@ async def main_route():
 
 @app.on_event('startup')
 async def startup():
+  print('Worker started successfully');
+  print('Collecting payments to wallet: ', worker_wallet);
+
   consumer_id = str(uuid.uuid4()) 
   loop = asyncio.get_running_loop()
 

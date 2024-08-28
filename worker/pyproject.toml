@@ -12,9 +12,10 @@ uvicorn = "^0.30.6"
 python-dotenv = "^1.0.1"
 pydantic = "^2.8.2"
 aio-pika = "^9.4.3"
-zkgraph = {git = "git@github.com:agencyenterprise/zkgraph-bnb-hack.git"}
+zkgraph = { git = "https://github.com/agencyenterprise/zkgraph-bnb-hack.git" }
 onnx = "^1.16.2"
 dill = "^0.3.8"
+gunicorn = "^23.0.0"
 
 
 [build-system]
