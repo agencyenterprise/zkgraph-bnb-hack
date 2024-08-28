@@ -3,13 +3,15 @@
 import Button from "@/components/button";
 import { useChain } from "@/providers/chain";
 import { useActiveAccount } from "thirdweb/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { isValidJson } from "@/utils/json";
 import JsonInput from "@/components/json-input";
 import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import Loading from "@/components/loading";
+import * as ethers from "ethers";
+import Link from "next/link";
 
 type Data = {
   name?: string;
@@ -38,8 +40,19 @@ export default function BuyPage() {
   const [selectedModelOption, setSelectedModelOption] = useState<
     number | undefined
   >();
-  const { client, escrowContract } = useChain();
+  const { client, escrowBalance, escrowContract } = useChain();
   const activeAccount = useActiveAccount();
+  const [amount, setAmount] = useState<string>();
+
+  useEffect(() => {
+    if (escrowBalance != undefined) {
+      try {
+        setAmount(ethers.formatEther(escrowBalance));
+      } catch (e) {
+        console.log("Error formating contract credits", e);
+      }
+    }
+  }, [escrowBalance]);
 
   const handleInference = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,7 +91,7 @@ export default function BuyPage() {
     <div className="bg-tertiary-900 py-20 sm:py-32 min-h-screen">
       <form onSubmit={handleInference}>
         <div className="mx-auto w-full sm:max-w-2xl">
-          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-secondary-100 pb-0 sm:pb-6 text-center mx-auto">
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-secondary-100 pb-0 sm:pb-3 text-center mx-auto">
             Proof Request
           </h1>
           {loading ? (
@@ -87,6 +100,15 @@ export default function BuyPage() {
             </div>
           ) : currentStep === 1 ? (
             <div className="py-8 px-4">
+              {Number(amount) === 0 && <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-3" role="alert">
+                <p>You must have some credits to request a proof</p>
+                <p className="font-bold">
+                  <Link href="/buy">
+                    Click here to buy some credits
+                  </Link>
+                </p>
+              </div>}
+
               <h3 className="text-xl text-center font-bold tracking-tight text-primary-500 pb-8">
                 Select the model you want to use
               </h3>
@@ -116,7 +138,10 @@ export default function BuyPage() {
                   onClick={() => setCurrentStep(2)}
                   label="Continue"
                   className="mt-4"
-                  disabled={selectedModelOption === undefined}
+                  disabled={
+                    selectedModelOption === undefined ||
+                    Number(amount) === 0
+                  }
                 />
               </div>
             </div>
@@ -173,7 +198,8 @@ export default function BuyPage() {
                   className="mt-4"
                   disabled={
                     formData.name === undefined ||
-                    formData.description === undefined
+                    formData.description === undefined ||
+                    Number(amount) === 0
                   }
                 />
               </div>
@@ -205,7 +231,10 @@ export default function BuyPage() {
                   id="send"
                   type="submit"
                   label="Compute Proof"
-                  disabled={!isValidJson(formData?.jsonInput ?? "")}
+                  disabled={
+                    !isValidJson(formData?.jsonInput ?? "") ||
+                    Number(amount) === 0
+                  }
                 />
               </div>
             </div>
