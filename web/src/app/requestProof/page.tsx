@@ -54,7 +54,7 @@ export default function BuyPage() {
     } else if (currentStep === 3) {
       setFormData({ 
         ...formData,
-        jsonInput: "[[1.2186765670776367, 1.057628870010376]]"
+        jsonInput: "[[1.28, 1.05]]"
       })
     }
   }, [currentStep]);
