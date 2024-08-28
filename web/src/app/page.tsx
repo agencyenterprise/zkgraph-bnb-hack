@@ -23,21 +23,21 @@ export default function Home() {
   const steps = [
     {
       icon: faUpload,
-      title: "Upload Model",
+      title: "Upload Computational Graph",
       description:
-        "Submit your ONNX graph to the zkGraph network using our Python SDK.",
+        "Submit your ONNX graph to the zkGraph network using our Python SDK. Credits are required, but you can earn them by contributing computation power.",
     },
     {
       icon: faDatabase,
       title: "Distributed Proving",
       description:
-        "Our network of prover nodes generates zero-knowledge proofs for your computation.",
+        "Our network of prover nodes generates zero-knowledge proofs for your computation. Workers on the network are compensated for their participation.",
     },
     {
       icon: faShield,
       title: "On-chain Verification",
       description:
-        "The proof is verified on the Binance Smart Chain, ensuring trustless and efficient validation.",
+        "The proof can be easily verified on the Binance Smart Chain, ensuring trustless and efficient validation.",
     },
   ];
 
@@ -71,10 +71,10 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative mx-auto max-w-2xl py-16 sm:pt-48 sm:pb-36 px-4 text-secondary-100">
+      <div className="relative mx-auto max-w-3xl py-16 sm:pt-48 sm:pb-36 px-2 text-secondary-100">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-md leading-6 text-secondary-400 ring-1 ring-tertiary-600 hover:ring-tertiary-400">
-            zkGraph for Binance Smart Chain is now available on{" "}
+            zkGraph for Binance Smart Chain Testnet is live!{" "}
             <Link
               href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
               className="font-semibold text-primary-500 hover:text-primary-400"

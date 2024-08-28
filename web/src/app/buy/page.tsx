@@ -107,10 +107,14 @@ export default function BuyPage() {
             Buy Credits
           </p>
         </div>
+
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-secondary-200">
+          <p className="text-white text-xl text-bold">
+            Make sure your wallet is connected and funded with tBSC.
+          </p>
           In order to submit proof requests, you must purchase credits using BSC
           (currently in testnet tBSC). Select a tier below or provide a custom
-          amount. Make sure your wallet is connected and funded with tBSC.
+          amount.
         </p>
 
         <div className="mx-auto py-10 flex w-full flex-wrap gap-8 items-center justify-center">

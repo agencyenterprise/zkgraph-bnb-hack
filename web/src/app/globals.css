@@ -18,6 +18,20 @@ body {
         rgb(var(--background-start-rgb));
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 700;
+}
+
+p,
+nav {
+    font-weight: 100;
+}
+
 @layer utilities {
     .text-balance {
         text-wrap: balance;
