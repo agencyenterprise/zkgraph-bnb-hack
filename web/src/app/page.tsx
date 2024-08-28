@@ -14,6 +14,7 @@ import {
   faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { title } from "process";
 
 export default function Home() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function Home() {
     },
   ];
 
-  const proverCommand = "curl -sSL https://get.zkgraph.io | bash";
+  const proverCommand = "curl -sSL https://get.0k.wtf | bash";
 
   const copyCommand = () => {
     navigator.clipboard.writeText(proverCommand);
@@ -49,14 +50,28 @@ export default function Home() {
   };
 
   const benefits = [
-    { icon: faServer, text: "Lightweight setup - run on any machine" },
-    { icon: faMemory, text: "Low memory usage - doesn't hog your resources" },
-    { icon: faCoins, text: "Earn BSC tokens for contributing to the network" },
+    {
+      icon: faServer,
+      title: "Lightweight Docker Setup",
+      description:
+        "Easy to configure on any machine without heavy hardware requirements.",
+    },
+    {
+      icon: faMemory,
+      title: "Low Resource Usage",
+      description: "Minimal impact on your system's performance.",
+    },
+    {
+      icon: faCoins,
+      title: "Earn BSC Tokens",
+      description:
+        "Get rewarded for contributing to the network's computation power.",
+    },
   ];
 
   return (
     <>
-      <div className="relative mx-auto max-w-2xl py-20 sm:py-36 px-4 text-secondary-100">
+      <div className="relative mx-auto max-w-2xl py-16 sm:pt-48 sm:pb-36 px-4 text-secondary-100">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-md leading-6 text-secondary-400 ring-1 ring-tertiary-600 hover:ring-tertiary-400">
             zkGraph for Binance Smart Chain is now available on{" "}
@@ -77,7 +92,7 @@ export default function Home() {
           <h2 className="text-xl sm:text-4xl">
             for trustless verifiable machine learning
           </h2>
-          <p className="mt-6 text-lg leading-8 text-secondary-200">
+          <p className="mt-6 text-lg leading-8 text-white">
             zkGraph harnesses a network of distributed prover nodes to generate
             zero-knowledge proofs for ONNX graphs, starting with MLP and NumPy
             computations. By leveraging the Binance Smart Chain and the
@@ -122,8 +137,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* How it Works Section */}
-      <div className="py-24 sm:py-32">
+      <div className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
             <p className="mt-2 text-3xl font-bold tracking-tight text-secondary-100 sm:text-4xl">
@@ -139,8 +153,8 @@ export default function Home() {
             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
               {steps.map((step, stepIdx) => (
                 <div key={stepIdx} className="flex flex-col">
-                  <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-secondary-100">
-                    <div className="rounded-lg bg-secondary-800 p-2 ring-1 ring-secondary-700">
+                  <dt className="flex items-center gap-x-3 text-xl font-semibold leading-7 text-secondary-100">
+                    <div className="rounded-lg bg-secondary-800 pb-2 pt-3 px-3 ring-1 ring-secondary-700">
                       <FontAwesomeIcon icon={step.icon} className="w-8 h-8" />
                     </div>
                     {step.title}
@@ -155,7 +169,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="relative py-5">
+      <div id="node" className="relative py-5">
         <div className="absolute inset-0 flex items-center" aria-hidden="true">
           <div className="w-full h-0.5 bg-gradient-to-r from-black via-primary-500 to-black"></div>
         </div>
@@ -166,7 +180,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="py-24 sm:py-32">
+      <div className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
             <p className="mt-2 text-3xl font-bold tracking-tight text-secondary-100 sm:text-4xl">
@@ -175,17 +189,26 @@ export default function Home() {
             <p className="mt-6 text-lg leading-8 text-secondary-300">
               Contribute to the zkGraph network by running a prover node.
               It&apos;s easy to set up and you can earn BSC tokens for your
-              contribution.
+              contribution. You&apos;ll need to have{" "}
+              <span className="text-primary-500">
+                <Link
+                  href="https://docs.docker.com/get-docker/"
+                  className="hover:text-primary-400"
+                >
+                  Docker
+                </Link>
+              </span>{" "}
+              installed on your machine.
             </p>
           </div>
           <div className="mt-10 flex justify-center">
             <div className="relative">
-              <pre className="bg-secondary-700 text-secondary-100 p-4 rounded-lg font-mono text-sm">
+              <pre className="bg-secondary-700 text-secondary-100 p-8 rounded-lg font-mono text-sm">
                 {proverCommand}
               </pre>
               <button
                 onClick={copyCommand}
-                className="absolute top-2 right-2 text-secondary-400 hover:text-secondary-200"
+                className="absolute top-2 right-2 text-secondary-400 hover:text-secondary-800"
                 aria-label="Copy command"
               >
                 <FontAwesomeIcon
@@ -195,24 +218,25 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="mt-16 max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold text-secondary-100 mb-6">
-              Benefits of Running a Node
-            </h3>
-            <ul className="space-y-4">
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
               {benefits.map((benefit, index) => (
-                <li
-                  key={index}
-                  className="flex items-center space-x-3 text-secondary-300"
-                >
-                  <FontAwesomeIcon
-                    icon={benefit.icon}
-                    className="w-5 h-5 text-primary-500"
-                  />
-                  <span>{benefit.text}</span>
-                </li>
+                <div key={index} className="flex flex-col">
+                  <dt className="flex items-center gap-x-3 text-xl font-semibold leading-7 text-white">
+                    <div className="rounded-lg bg-primary-500/10 pb-2 pt-3 px-3 ring-1 ring-primary-500/20">
+                      <FontAwesomeIcon
+                        icon={benefit.icon}
+                        className="h-8 w-8 text-primary-500"
+                      />
+                    </div>
+                    {benefit.title}
+                  </dt>
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
+                    <p className="flex-auto">{benefit.description}</p>
+                  </dd>
+                </div>
               ))}
-            </ul>
+            </dl>
           </div>
         </div>
       </div>

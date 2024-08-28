@@ -104,12 +104,13 @@ export default function BuyPage() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mt-2 text-4xl font-bold tracking-tight text-secondary-100 sm:text-5xl">
-            Packs for all needs
+            Buy Credits
           </p>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-secondary-200">
-          Choose an affordable pack that will give you credits to run inferences
-          and give you some kind of advantage.
+          In order to submit proof requests, you must purchase credits using BSC
+          (currently in testnet tBSC). Select a tier below or provide a custom
+          amount. Make sure your wallet is connected and funded with tBSC.
         </p>
 
         <div className="mx-auto py-10 flex w-full flex-wrap gap-8 items-center justify-center">

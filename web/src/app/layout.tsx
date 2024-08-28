@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,6 +52,7 @@ export default function RootLayout({
           <Header />
           {children}
           <ToastContainer theme="dark" />
+          <Footer />
         </body>
       </html>
     </Providers>
