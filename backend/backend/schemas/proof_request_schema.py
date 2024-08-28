@@ -1,6 +1,6 @@
 def individual_serial(proof_request) -> dict:
     return {
-        "id": str(proof_request["_id"]),
+        "id": str(proof_request["_id"]) if proof_request.get("_id") is not None else None,
         "name": str(proof_request["name"]),
         "description": str(proof_request["description"]),
         "ai_model_name": str(proof_request["ai_model_name"]),
