@@ -41,7 +41,7 @@ export default function Home() {
     },
   ];
 
-  const proverCommand = "curl -sSL https://worker.0k.wtf | sh";
+  const proverCommand = "curl -sSL https://0k.wtf/zerok-worker.sh | sh";
 
   const copyCommand = () => {
     navigator.clipboard.writeText(proverCommand);
