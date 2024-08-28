@@ -62,37 +62,37 @@ def main():
     print(
         f"Graph output: {graph_output}, dequantized: {dequantization(graph_output.data)}"
     )
-
-    start = time.time()
     layered_circuit, _ = Value.compile_layered_circuit(graph_output)
-    start = time.time()
-    if use_mkzg:
-        public_parameters = {
-            "r_pp": "./tests/assets/random_polynomial_r_powers_of_tau.ptau",
-            "zk_pp": "./tests/assets/zk_sumcheck_powers_of_tau.ptau",
-        }
-        prover = ZkProver(
-            layered_circuit, mkzg=use_mkzg, public_parameters=public_parameters
-        )
-        verifier = ZkVerifier(
-            layered_circuit, mkzg=True, public_parameters=public_parameters
-        )
-    else:
-        prover = ZkProver(layered_circuit, mkzg=False)
-        verifier = ZkVerifier(layered_circuit, mkzg=False)
-    assert prover.prove()
-    print(f"Time to prove: {time.time() - start}")
-    proof_transcript = prover.proof_transcript.to_bytes()
-    print(f"Time to prove: {time.time() - start}")
-    start = time.time()
-    verifier.run_verifier(proof_transcript=proof_transcript)
-    print(f"Time to verify: {time.time() - start}")
-    if use_noir:
-        verifier.get_noir_transcript()
-        subprocess.call(
-            "cd onchain_verifier/ && nargo execute iris && bb prove -b ./target/onchain_verifier.json -w ./target/iris.gz -o ./target/proof && bb write_vk -b target/onchain_verifier.json -o ./target/vk && bb verify -k ./target/vk -p ./target/proof && bb contract",
-            shell=True,
-        )
+    for _ in range(1000):
+
+        start = time.time()
+        if use_mkzg:
+            public_parameters = {
+                "r_pp": "./tests/assets/random_polynomial_r_powers_of_tau.ptau",
+                "zk_pp": "./tests/assets/zk_sumcheck_powers_of_tau.ptau",
+            }
+            prover = ZkProver(
+                layered_circuit, mkzg=use_mkzg, public_parameters=public_parameters
+            )
+            verifier = ZkVerifier(
+                layered_circuit, mkzg=True, public_parameters=public_parameters
+            )
+        else:
+            prover = ZkProver(layered_circuit, mkzg=False)
+            verifier = ZkVerifier(layered_circuit, mkzg=False)
+        assert prover.prove()
+        print(f"Time to prove: {time.time() - start}")
+        proof_transcript = prover.proof_transcript.to_bytes()
+        print(f"Time to prove: {time.time() - start}")
+        start = time.time()
+        verifier.run_verifier(proof_transcript=proof_transcript)
+        print(f"Time to verify: {time.time() - start}")
+        if use_noir:
+            verifier.get_noir_transcript()
+            subprocess.call(
+                "cd onchain_verifier/ && nargo execute iris && bb prove -b ./target/onchain_verifier.json -w ./target/iris.gz -o ./target/proof && bb write_vk -b target/onchain_verifier.json -o ./target/vk && bb verify -k ./target/vk -p ./target/proof && bb contract",
+                shell=True,
+            )
 
 
 if __name__ == "__main__":

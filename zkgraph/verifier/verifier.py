@@ -455,7 +455,7 @@ class ZkVerifier:
             phase_1 = v["phase_1"]
             for i in phase_1:
                 phase_1_left.append(
-                    quantization(round(dequantization(i[0].val), 2)) % prime_mod
+                    quantization(round(dequantization(i[1].val), 2)) % prime_mod
                 )
                 phase_1_right.append(
                     quantization(round(dequantization(i[1].val), 2)) % prime_mod
@@ -463,7 +463,7 @@ class ZkVerifier:
             phase_2 = v["phase_2"]
             for i in phase_2:
                 phase_2_left.append(
-                    quantization(round(dequantization(i[0].val), 2)) % prime_mod
+                    quantization(round(dequantization(i[1].val), 2)) % prime_mod
                 )
                 phase_2_right.append(
                     quantization(round(dequantization(i[1].val), 2)) % prime_mod
@@ -471,7 +471,7 @@ class ZkVerifier:
             gkr_round = v["gkr_round"]
             for i in gkr_round:
                 gkr_round_left.append(
-                    quantization(round(dequantization(i[0].val), 2)) % prime_mod
+                    quantization(round(dequantization(i[1].val), 2)) % prime_mod
                 )
                 gkr_round_right.append(
                     quantization(round(dequantization(i[1].val), 2)) % prime_mod
@@ -479,7 +479,7 @@ class ZkVerifier:
             input_round = v["input"]
             for i in input_round:
                 input_round_left.append(
-                    quantization(round(dequantization(i[0].val), 2)) % prime_mod
+                    quantization(round(dequantization(i[1].val), 2)) % prime_mod
                 )
                 input_round_right.append(
                     quantization(round(dequantization(i[1].val), 2)) % prime_mod
