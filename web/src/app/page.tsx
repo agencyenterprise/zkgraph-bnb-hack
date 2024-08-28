@@ -37,7 +37,7 @@ export default function Home() {
       icon: faShield,
       title: "On-chain Verification",
       description:
-        "The proof can be easily verified on the Binance Smart Chain, ensuring trustless and efficient validation.",
+        "The proof can be easily verified on BNB Chain for trustless and efficient validation.",
     },
   ];
 
@@ -96,8 +96,7 @@ export default function Home() {
           <p className="mt-6 text-lg leading-8 text-white">
             zkGraph harnesses a network of distributed prover nodes to generate
             zero-knowledge proofs for ONNX graphs, starting with MLP and NumPy
-            computations. By leveraging the Binance Smart Chain and the
-            lightning-fast{" "}
+            computations. By leveraging the BNB Chain and the lightning-fast{" "}
             <Link
               className="text-primary-500 hover:text-primary-400"
               href="https://eprint.iacr.org/2019/317"
