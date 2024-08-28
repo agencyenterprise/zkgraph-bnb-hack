@@ -43,7 +43,7 @@ export default function Home() {
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Button
-            className="text-xl text-primary-500 bg-black ring ring-tertiary-600 hover:ring-tertiary-400"
+            className="text-xl"
             id={`button-started`}
             type="button"
             label="Interactive Demo"
