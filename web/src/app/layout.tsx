@@ -35,7 +35,8 @@ const klinicSlab = localFont({
 
 export const metadata: Metadata = {
   title: "ZeroK",
-  description: "A ZKML framework based on the Virgo++/Libra protocol",
+  description:
+    "A distributed zkML framework for secure and verifiable machine learning",
 };
 
 export default function RootLayout({
