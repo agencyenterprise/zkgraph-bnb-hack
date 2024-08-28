@@ -150,14 +150,14 @@ To see in action, run the script below:
 ```shell 
 python main.py
 ```
-You can opt to run with the MZKG polynomial commitment scheme by running with:
+You can opt to run with the MKZG polynomial commitment scheme by running with:
 
 ```shell
 USE_PCS=1 python main.py
 ```
 
 ### On-Chain Verifier
-We also created a simple on-chain verifier using the noir's ZK DSL. The noir code implements the assertions required on the zkgraph verifier. Through the use of proof recursion, we can attest the validity of the original computation on-chain (https://www.youtube.com/watch?v=0LW-qeVe6QI), and by using noir, we can do that on-chain. In this hackathon, we mainly constructed the on-chain verifier as a toy experiment outlining how one can create an on-chain verifier for a GKR (https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/2008-DelegatingComputation.pdf) based protocols such as Libra. 
+We also created a simple on-chain verifier using noir's ZK DSL. The noir code implements the assertions required on the zkgraph verifier. Through the use of proof recursion, we can attest the validity of the original computation on-chain (https://www.youtube.com/watch?v=0LW-qeVe6QI), and by using noir, we can do that on-chain. In this hackathon, we mainly constructed the on-chain verifier as a toy experiment outlining how one can create an on-chain verifier for a GKR (https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/2008-DelegatingComputation.pdf) based protocols such as Libra. 
 
 #### Installing noir dependencies
 
@@ -179,8 +179,10 @@ USE_NOIR=1 python main.py
 Zkgraph is NOT ready for production, and we can only generate proofs for ops like GEMM, ReLu, and CNN. We plan to expand on the future, and this hackathon is our open invitation to the ZK geeks out there who want to build or leverage a protocol with linear time prover complexity. GKR-based protocols can also benefit from parallel and decentralized implementations, making them much more practical than SOTA protocols like Hyperplonk. 
 
 We implemented a few papers for the code we created:
-Libra: Succinct Zero-Knowledge Proofs with Optimal Prover [https://eprint.iacr.org/2019/317.pdf]
-Signatures of correct computations [https://eprint.iacr.org/2011/587.pdf]
+
+- [Libra: Succinct Zero-Knowledge Proofs with Optimal Prover](https://eprint.iacr.org/2019/317.pdf)
+- [Signatures of correct computations (MKZG)](https://eprint.iacr.org/2011/587.pdf])
+
 We implemented everything in pure Python in the spirit that everybody should be able to read the code and understand it. Unfortunately, it is super slow, especially when using bls12-381 pairings. We plan to address this after the hackathon. Once again, we invite the community to work with us to implement these features, as we plan to implement CUDA extensions and redesign the protocol in C++, making it easier for cross-platform use, like generating ZKPs on the browser by leveraging wasm. 
 
 
