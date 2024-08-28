@@ -3,7 +3,7 @@ A ZKML framework based on the Libra protocoll for proving Onnx and general Numpy
 
 
 ## Introduction
-In a nutshell, zkgraph aims to provide a tool for non-cryptographers to work with inference over public data and ML models with public parameters. 
+In a nutshell, zkgraph aims to provide a tool for non-cryptographers to work with verifiable inference over public data and ML models with public parameters. 
 With Zkgraph statements such as:
 * ```I have a valid execution of a machine learning model with public inputs and public parameters```
 * ```I have a valid sequence of operations being performed by a known family of algorithms and with public inputs```
