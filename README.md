@@ -188,7 +188,7 @@ We implemented everything in pure Python in the spirit that everybody should be 
 
 We also were inspired by these source codes:
 - [Libra original code](https://github.com/sunblaze-ucb/Libra) (Base Logic for the GKR)
-- [Plookup](https://github.com/NOOMA-42/pylookup/tree/main/src/plookup) (The proof transcript we used)
+- [Plookup](https://github.com/NOOMA-42/pylookup/tree/main/src/plookup) (For the Merlin transcript we used)
 
 ## License
 Copyright (c) 2024 AE Studio. (MIT License)
