@@ -1093,9 +1093,9 @@ sympy = "^1.13.2"
 type = "git"
 url = "https://github.com/agencyenterprise/zkgraph-bnb-hack.git"
 reference = "HEAD"
-resolved_reference = "b9d0f4f7f8d31555531dadcd08c856f6d5634e4b"
+resolved_reference = "bc4b527cbd7187e8ff9c9b6967ad06d260845fd7"
 
 [metadata]
 lock-version = "2.0"
-python-versions = "3.11.9"
-content-hash = "8748c02816410019da95350e2e092680fc396c25438d41601618c6a9a3f80982"
+python-versions = "3.12.3"
+content-hash = "dc63bfef9744d80632ec033722085f5f7975c719304913d9258a8ba99061d56e"

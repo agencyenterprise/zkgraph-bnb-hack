@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11.9-slim
+FROM python:3.12.3
 
 # Set environment variables to prevent Python from writing pyc files and buffering stdout/stderr
 ENV PYTHONDONTWRITEBYTECODE 1
