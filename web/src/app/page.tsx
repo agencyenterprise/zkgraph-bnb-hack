@@ -42,7 +42,7 @@ export default function Home() {
   ];
 
   const proverCommand =
-    "ZKGRAPH_BSC_WALLET=yourwalletaddress; curl -sSL https://0k.wtf/zk-worker.sh | sh";
+    "export ZKGRAPH_BSC_WALLET=yourwalletaddress; curl -sSL https://0k.wtf/zk-worker.sh | sh";
 
   const copyCommand = () => {
     navigator.clipboard.writeText(proverCommand);
@@ -75,7 +75,7 @@ export default function Home() {
       <div className="relative mx-auto max-w-3xl py-16 sm:pt-48 sm:pb-36 px-2 text-secondary-100">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-md leading-6 text-secondary-400 ring-1 ring-tertiary-600 hover:ring-tertiary-400">
-            zkGraph for Binance Smart Chain Testnet is live!{" "}
+            zkGraph for BNB Chain Testnet is live!{" "}
             <Link
               href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
               className="font-semibold text-primary-500 hover:text-primary-400"
