@@ -47,9 +47,15 @@ export default function BuyPage() {
   useEffect(() => {
     if (currentStep === 2) {
       setFormData({
+        ...formData,
         name: `proof-request-${Date.now()}`,
         description: "Proof request description"
       });
+    } else if (currentStep === 3) {
+      setFormData({ 
+        ...formData,
+        jsonInput: "[[1.2186765670776367, 1.057628870010376]]"
+      })
     }
   }, [currentStep]);
 
