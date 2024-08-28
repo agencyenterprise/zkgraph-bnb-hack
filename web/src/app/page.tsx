@@ -42,7 +42,7 @@ export default function Home() {
   ];
 
   const proverCommand =
-    "ZKGRAPH_BSC_WALLET=yourwalletaddress; curl -sSL https://0k.wtf/zerok-worker.sh | sh";
+    "ZKGRAPH_BSC_WALLET=yourwalletaddress; curl -sSL https://0k.wtf/zk-worker.sh | sh";
 
   const copyCommand = () => {
     navigator.clipboard.writeText(proverCommand);
