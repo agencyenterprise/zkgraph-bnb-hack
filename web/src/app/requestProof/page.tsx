@@ -51,7 +51,7 @@ export default function BuyPage() {
         description: "Proof request description"
       });
     }
-  }, []);
+  }, [currentStep]);
 
   useEffect(() => {
     if (escrowBalance != undefined) {
