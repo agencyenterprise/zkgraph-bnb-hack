@@ -12,7 +12,7 @@ const navigation = [
   { name: "Request Proof", href: "/requestProof" },
   { name: "Proof History", href: "/requests" },
   { name: "Buy credits", href: "/buy" },
-  { name: "Earn Money", href: "/worker" },
+  // { name: "Earn Money", href: "/worker" },
   { name: "Profile", href: "/profile" },
   {
     name: "Github",
@@ -50,7 +50,7 @@ export default function Example() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-secondary-100 hover:text-primary-500"
+              className="text-md font-semibold leading-6 text-secondary-100 hover:text-primary-500"
             >
               {item.name}
             </Link>
