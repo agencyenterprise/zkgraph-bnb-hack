@@ -41,7 +41,7 @@ export default function Home() {
     },
   ];
 
-  const proverCommand = "curl -sSL https://get.0k.wtf | bash";
+  const proverCommand = "curl -sSL https://worker.0k.wtf | sh";
 
   const copyCommand = () => {
     navigator.clipboard.writeText(proverCommand);
