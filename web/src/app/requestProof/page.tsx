@@ -45,7 +45,7 @@ export default function BuyPage() {
   const [amount, setAmount] = useState<string>();
 
   useEffect(() => {
-    if (currentStep === 3) {
+    if (currentStep === 2) {
       setFormData({
         name: `proof-request-${Date.now()}`,
         description: "Proof request description"
