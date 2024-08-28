@@ -157,7 +157,7 @@ USE_PCS=1 python main.py
 ```
 
 ### On-Chain Verifier
-We also created a simple on-chain verifier using noir's ZK DSL. The noir code implements the assertions required on the zkgraph verifier. Through the use of proof recursion, we can attest the validity of the original computation on-chain (https://www.youtube.com/watch?v=0LW-qeVe6QI), and by using noir, we can do that on-chain. In this hackathon, we mainly constructed the on-chain verifier as a toy experiment outlining how one can create an on-chain verifier for a GKR (https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/2008-DelegatingComputation.pdf) based protocols such as Libra. 
+We also created a simple on-chain verifier using noir's ZK DSL. The noir code implements the assertions required on the zkgraph verifier. Through the use of [proof recursion](https://www.youtube.com/watch?v=0LW-qeVe6QI), we can attest the validity of the original computation on-chain, and by using noir, we can do that on-chain. In this hackathon, we mainly constructed the on-chain verifier as a toy experiment outlining how one can create an on-chain verifier for a [GKR-based](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/2008-DelegatingComputation.pdf) protocols such as Libra. 
 
 #### Installing noir dependencies
 
