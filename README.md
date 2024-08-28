@@ -166,7 +166,7 @@ We also created a simple on-chain verifier using noir's ZK DSL. The noir code im
 
 
 #### Generating the on-chain verifier
-You must complete the last step to be able to generate the contract!!
+**You must complete the last step to be able to generate the contract!!**
 
 To generate the verifier contract in solidity run the test script like this:
 
@@ -186,6 +186,9 @@ We implemented a few papers for the code we created:
 We implemented everything in pure Python in the spirit that everybody should be able to read the code and understand it. Unfortunately, it is super slow, especially when using bls12-381 pairings. We plan to address this after the hackathon. Once again, we invite the community to work with us to implement these features, as we plan to implement CUDA extensions and redesign the protocol in C++, making it easier for cross-platform use, like generating ZKPs on the browser by leveraging wasm. 
 
 
+We also were inspired by these source codes:
+- [Libra original code](https://github.com/sunblaze-ucb/Libra) (Base Logic for the GKR)
+- [Plookup](https://github.com/NOOMA-42/pylookup/tree/main/src/plookup) (The proof transcript we used)
 
 ## License
 Copyright (c) 2024 AE Studio. (MIT License)
