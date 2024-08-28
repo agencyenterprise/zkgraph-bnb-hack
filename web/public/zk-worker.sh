@@ -19,24 +19,22 @@ check_docker_status() {
     fi
 }
 
-# Check Docker status
-docker_status=$(check_docker_status)
-
 echo "============== zkGraph Worker Setup ======================"
 echo "==============     [BSC testnet]    ======================"
 echo "==============    https://0k.wtf    ======================"
 
-
+# Check Docker status
 echo "Checking Docker status..."
+docker_status=$(check_docker_status)
 
 case "$docker_status" in
     "not_installed")
-        echo "Docker is not installed. Please install Docker and ensure you have permissions to run Docker commands."
+        echo "Error: Docker is not installed. Please install Docker and ensure you have permissions to run Docker commands."
         echo "Visit https://docs.docker.com/get-docker/ for installation instructions."
         exit 1
         ;;
     "not_running")
-        echo "The Docker daemon is not running. Please start the Docker daemon and try again."
+        echo "Error: The Docker daemon is not running. Please start the Docker daemon and try again."
         echo "On most systems, you can start Docker with:"
         echo "sudo systemctl start docker    # For systemd-based systems"
         echo "sudo service docker start      # For init.d-based systems"
@@ -44,7 +42,7 @@ case "$docker_status" in
         exit 1
         ;;
     "no_permission")
-        echo "You don't have permission to run Docker commands."
+        echo "Error: You don't have permission to run Docker commands."
         echo "Ensure your user is part of the Docker group:"
         echo "sudo usermod -aG docker $USER"
         echo "After adding yourself to the Docker group, you'll need to log out and log back in for the changes to take effect."
@@ -54,14 +52,21 @@ case "$docker_status" in
         echo "\nDocker is running and you have the necessary permissions.\n"
         ;;
     *)
-        echo "An unknown error occurred while checking Docker status."
+        echo "Error: An unknown error occurred while checking Docker status."
         exit 1
         ;;
 esac
 
-# Prompt for BSC wallet address (optional)
-echo "Please enter your BSC wallet public key for receiving payments (press Enter to skip):"
-read wallet_address
+# Check for wallet address in environment variable
+if [ -z "$ZKGRAPH_BSC_WALLET" ]; then
+    echo "Warning: ZKGRAPH_BSC_WALLET environment variable is not set."
+    echo "You can set it by running: export ZKGRAPH_BSC_WALLET=your_wallet_address"
+    echo "Proceeding without a wallet address. You won't receive payments for your work."
+    wallet_address=""
+else
+    wallet_address=$ZKGRAPH_BSC_WALLET
+    echo "Using wallet address: $wallet_address"
+fi
 
 # Prepare Docker run command
 docker_run_cmd="docker run -d -p 8000:8000"
@@ -83,6 +88,9 @@ if ! eval "$docker_run_cmd"; then
     echo "Error: Failed to start the worker container. Please check the error message above."
     exit 1
 else
-    echo "Worker container started successfully!"
+    echo "Success: Worker container started successfully!"
     echo "You can check the logs with: docker logs $WORKER_CONTAINER_NAME"
 fi
+
+echo "\nThank you for running a zkGraph worker node!"
+echo "Visit https://0k.wtf for more information and support."
