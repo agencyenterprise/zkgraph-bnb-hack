@@ -58,5 +58,5 @@ poetry install
 ## Running the Application
 
 ```bash
-uvicorn main:app --reload --port=8000
+uvicorn main:app --reload --port=8001
 ```
