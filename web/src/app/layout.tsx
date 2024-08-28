@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 
 import Header from "@/components/header";
@@ -8,10 +7,9 @@ import { ToastContainer } from "react-toastify";
 
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "@/components/footer";
 
-const inter = Inter({ subsets: ["latin"] });
-
-const klinicSlab = localFont({
+const fonts = localFont({
   src: [
     {
       path: "./fonts/klinic/KlinicSlabMedium.otf",
@@ -28,9 +26,14 @@ const klinicSlab = localFont({
       weight: "700",
       style: "normal",
     },
+    {
+      path: "./fonts/vulf/VulfSansDemo-Regular.otf",
+      weight: "100",
+      style: "normal",
+    },
   ],
   display: "swap",
-  variable: "--font-klinic-slab",
+  variable: "--font-klinic",
 });
 
 export const metadata: Metadata = {
@@ -47,10 +50,11 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang="en">
-        <body className={`${inter.className} ${klinicSlab.className}`}>
+        <body className={`${fonts.className}`}>
           <Header />
           {children}
           <ToastContainer theme="dark" />
+          <Footer />
         </body>
       </html>
     </Providers>

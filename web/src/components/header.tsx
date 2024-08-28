@@ -6,18 +6,16 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Wallet from "./wallet";
 import Image from "next/image";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Request Proof", href: "/requestProof" },
   { name: "Proof History", href: "/requests" },
   { name: "Buy credits", href: "/buy" },
-  // { name: "Earn Money", href: "/worker" },
-  { name: "Profile", href: "/profile" },
-  {
-    name: "Github",
-    href: "https://github.com/agencyenterprise/zkgraph-bnb-hack",
-  },
+  { name: "Run a Node", href: "/#node" },
+  { name: "API Keys", href: "/profile" },
 ];
 
 export default function Example() {
@@ -59,6 +57,16 @@ export default function Example() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Wallet />
         </div>
+        <div className="hidden lg:flex lg:flex-2 lg:justify-end ml-4">
+          <a
+            href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-white transition-colors duration-300"
+          >
+            <FontAwesomeIcon icon={faGithub} size="2x" />
+          </a>
+        </div>
       </nav>
       <Dialog
         as="div"
@@ -98,6 +106,16 @@ export default function Example() {
               </div>
               <div className="py-6">
                 <Wallet />
+              </div>
+              <div className="py-6">
+                <a
+                  href="https://github.com/agencyenterprise/zkgraph-bnb-hack"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-colors duration-300"
+                >
+                  <FontAwesomeIcon icon={faGithub} size="2x" />
+                </a>
               </div>
             </div>
           </div>
