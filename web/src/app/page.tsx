@@ -173,8 +173,9 @@ export default function Home() {
               Run a Prover Node
             </p>
             <p className="mt-6 text-lg leading-8 text-secondary-300">
-              Contribute to the zkGraph network by running a prover node. It's
-              easy to set up and you can earn BSC tokens for your contribution.
+              Contribute to the zkGraph network by running a prover node.
+              It&apos;s easy to set up and you can earn BSC tokens for your
+              contribution.
             </p>
           </div>
           <div className="mt-10 flex justify-center">
