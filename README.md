@@ -1,5 +1,5 @@
 # zkgraph-bnb-hack
-A ZKML framework based on the Libra protocoll for proving Onnx and general Numpy computations built with pure Python. 
+A ZKML framework based on the [Libra](https://eprint.iacr.org/2019/317) protocol for proving Onnx and general Numpy computations built with pure Python. 
 
 
 ## Introduction
