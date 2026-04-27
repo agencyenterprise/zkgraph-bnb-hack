@@ -13,7 +13,7 @@ python-dotenv = "^1.0.1"
 pydantic = "^2.8.2"
 aio-pika = "^9.4.3"
 zkgraph = {git = "git@github.com:agencyenterprise/zkgraph-bnb-hack.git"}
-onnx = "^1.16.2"
+onnx = "^1.21.0"
 dill = "^0.3.8"
 
 
