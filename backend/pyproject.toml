@@ -13,7 +13,7 @@ pymongo = {extras = ["srv"], version = "^4.7.3"}
 python-dotenv = "^1.0.1"
 pydantic = "^2.8.2"
 pycognito = "^2024.5.1"
-web3 = "^6.20.2"
+web3 = "^7.15.0"
 eth-abi = "^5.1.0"
 aio-pika = "^9.4.3"
 dill = "^0.3.8"
